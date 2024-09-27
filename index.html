@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDDC Entertainment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+        main {
+            padding: 1em;
+            max-width: 800px;
+            margin: auto;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .chatbot {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: white;
+        }
+        .chat-log {
+            height: 200px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fafafa;
+        }
+        .chat-log p {
+            margin: 5px 0;
+        }
+        .chat-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .chat-submit {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to CDDC Entertainment</h1>
+    </header>
+    <main>
+        <h2>Chat with our AI Chatbot</h2>
+        <div class="chatbot">
+            <div class="chat-log" id="chat-log"></div>
+            <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
+            <button class="chat-submit" onclick="sendMessage()">Send</button>
+        </div>
+    </main>
+    <footer>
+        &copy; 2024 CDDC Entertainment. All rights reserved.
+    </footer>
+    <script>
+        function sendMessage() {
+            const chatLog = document.getElementById('chat-log');
+            const chatInput = document.getElementById('chat-input');
+            const userMessage = chatInput.value;
+
+            if (userMessage.trim() === '') return;
+
+            // Append user's message to the chat log
+            const userMessageElement = document.createElement('p');
+            userMessageElement.textContent = `User: ${userMessage}`;
+            chatLog.appendChild(userMessageElement);
+
+            // Clear the input
+            chatInput.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const aiResponse = getAIResponse(userMessage);
+                const aiMessageElement = document.createElement('p');
+                aiMessageElement.textContent = `AI: ${aiResponse}`;
+                chatLog.appendChild(aiMessageElement);
+
+                // Scroll to the bottom of the chat log
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }, 1000);
+        }
+
+        function getAIResponse(message) {
+            // Simple AI response logic (placeholder)
+            const responses = {
+                "hello": "Hello! How can I assist you today?",
+                "hi": "Hi there! What can I do for you?",
+                "how are you": "I'm an AI, so I don't have feelings, but I'm here to help you!",
+                "bye": "Goodbye! Have a great day!"
+            };
+            return responses[message.toLowerCase()] || "I'm not sure how to respond to that. Can you please rephrase?";
+        }
+    </script>
+</body>
+</html>

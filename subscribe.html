@@ -1,1 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe - Featured Individuals</title>
+    <style>
+        /* Include the same styles as in the home page */
+        /* Add additional styles for subscription form */
+        .subscription-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .subscription-form input, .subscription-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .subscription-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Featured Individuals</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="individuals.html">Individuals</a></li>
+                    <li><a href="subscribe.html">Subscribe</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
+    <div class="container">
+        <h2>Subscribe to Our Service</h2>
+        <div class="subscription-form">
+            <form action="#" method="post">
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+                <select name="payment_method" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+                <button type="submit">Subscribe Now</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Featured Individuals Subscription Service</p>
+    </footer>
+</body>
+</html>

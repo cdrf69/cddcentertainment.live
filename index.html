@@ -3,118 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDDC Entertainment</title>
+    <title>Featured Individuals Subscription Service</title>
     <style>
+        /* Basic responsive design */
         body {
             font-family: Arial, sans-serif;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
         }
         header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 1em 0;
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #bbb 1px solid;
         }
-        main {
-            padding: 1em;
-            max-width: 800px;
-            margin: auto;
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
         }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 1em 0;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+        header ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            overflow: hidden;
         }
-        .chatbot {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: white;
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
         }
-        .chat-log {
-            height: 200px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #fafafa;
+        header #branding {
+            float: left;
         }
-        .chat-log p {
-            margin: 5px 0;
+        header #branding h1 {
+            margin: 0;
         }
-        .chat-input {
-            width: calc(100% - 22px);
-            padding: 10px;
+        header nav {
+            float: right;
             margin-top: 10px;
         }
-        .chat-submit {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+        /* Add more styles for other elements */
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to CDDC Entertainment</h1>
-    </header>
-    <main>
-        <h2>Chat with our AI Chatbot</h2>
-        <div class="chatbot">
-            <div class="chat-log" id="chat-log"></div>
-            <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
-            <button class="chat-submit" onclick="sendMessage()">Send</button>
+        <div class="container">
+            <div id="branding">
+                <h1>Featured Individuals</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="individuals.html">Individuals</a></li>
+                    <li><a href="subscribe.html">Subscribe</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
         </div>
-    </main>
+    </header>
+
+    <div class="container">
+        <h2>Welcome to Featured Individuals</h2>
+        <p>Discover and connect with extraordinary people through our subscription service.</p>
+        <!-- Add featured individuals showcase here -->
+    </div>
+
     <footer>
-        &copy; 2024 CDDC Entertainment. All rights reserved.
+        <p>&copy; 2024 Featured Individuals Subscription Service</p>
     </footer>
+
     <script>
-        function sendMessage() {
-            const chatLog = document.getElementById('chat-log');
-            const chatInput = document.getElementById('chat-input');
-            const userMessage = chatInput.value;
-
-            if (userMessage.trim() === '') return;
-
-            // Append user's message to the chat log
-            const userMessageElement = document.createElement('p');
-            userMessageElement.textContent = `User: ${userMessage}`;
-            chatLog.appendChild(userMessageElement);
-
-            // Clear the input
-            chatInput.value = '';
-
-            // Simulate AI response
-            setTimeout(() => {
-                const aiResponse = getAIResponse(userMessage);
-                const aiMessageElement = document.createElement('p');
-                aiMessageElement.textContent = `AI: ${aiResponse}`;
-                chatLog.appendChild(aiMessageElement);
-
-                // Scroll to the bottom of the chat log
-                chatLog.scrollTop = chatLog.scrollHeight;
-            }, 1000);
-        }
-
-        function getAIResponse(message) {
-            // Simple AI response logic (placeholder)
-            const responses = {
-                "hello": "Hello! How can I assist you today?",
-                "hi": "Hi there! What can I do for you?",
-                "how are you": "I'm an AI, so I don't have feelings, but I'm here to help you!",
-                "bye": "Goodbye! Have a great day!"
-            };
-            return responses[message.toLowerCase()] || "I'm not sure how to respond to that. Can you please rephrase?";
-        }
+        // JavaScript for dynamic content loading and interactivity
+        // Add authentication checks, chatbot integration, etc.
     </script>
 </body>
 </html>

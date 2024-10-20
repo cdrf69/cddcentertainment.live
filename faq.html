@@ -1,1 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Featured Individuals</title>
+    <style>
+        /* Include the same styles as in the home page */
+        /* Add additional styles for FAQ section */
+        .faq-item {
+            margin-bottom: 20px;
+        }
+        .faq-item h3 {
+            cursor: pointer;
+        }
+        .faq-item p {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Featured Individuals</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="individuals.html">Individuals</a></li>
+                    <li><a href="subscribe.html">Subscribe</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <h3>How does the service work?</h3>
+            <p>Our service allows you to connect with featured individuals through a subscription model...</p>
+        </div>
+        <div class="faq-item">
+            <h3>What are the subscription options?</h3>
+            <p>We offer various subscription tiers with different levels of access...</p>
+        </div>
+        <!-- Add more FAQ items as needed -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Featured Individuals Subscription Service</p>
+    </footer>
+
+    <script>
+        // Simple script to toggle FAQ answers
+        document.querySelectorAll('.faq-item h3').forEach(item => {
+            item.addEventListener('click', event => {
+                const answer = event.target.nextElementSibling;
+                answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

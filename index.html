@@ -118,19 +118,19 @@
         }
 
         .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-btn:hover {
-          background-color :var(--secondary-color);
+          width :100 % ;
+          padding :10 px ;
+          background -color :var (--primary -color );
+          color :#000 ;
+          border :none ;
+          border -radius :5 px ;
+          cursor :pointer ;
+          font -size :16 px ;
+          transition :background -color 0.3 s ease ;
+      }
+      
+      .submit-btn:hover {
+          background -color :var (--secondary -color );
       }
       
       .toggle-form {
@@ -171,6 +171,7 @@
     </header>
 
     <div class="container">
+      <!-- Sign In Form -->
       <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
           <h2 id="formTitle">Sign In</h2>
           <div class="form-group">
@@ -195,8 +196,8 @@
               <input type="text" id="newUsername" name="newUsername" required>
           </div>
           <div class="form-group">
-              <label for="newPassword">Password</label>
-              <input type="password" id="newPassword" name="newPassword" required>
+              <label for="newPassword">Password (min. 6 characters)</label>
+              <input type="password" id="newPassword" name="newPassword" required minlength="6">
           </div>
           <button type="submit" class="submit-btn">Sign Up</button>
           <p class="toggle-form" onclick="toggleForm()">
@@ -245,9 +246,18 @@
                username = document.getElementById('newUsername').value ;
                password = document.getElementById('newPassword').value ;
 
-               localStorage.setItem(username, password);
-               alert ("Account created successfully! Please sign in.");
-               toggleForm(); // Switch to sign in form
+               if (localStorage.getItem(username)) {
+                   alert ("Username already exists. Please choose another.");
+                   return false ;
+               }
+
+               if (password.length >=6 ) { // Basic password validation
+                   localStorage.setItem(username, password);
+                   alert ("Account created successfully! Please sign in.");
+                   toggleForm(); // Switch to sign in form
+               } else {
+                   alert ("Password must be at least six characters long.");
+               }
            }
        }
 

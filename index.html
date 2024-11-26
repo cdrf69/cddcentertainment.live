@@ -44,22 +44,10 @@
             font-size: 16px;
         }
 
-        header ul {
-            padding: 0;
-            margin: 0;
-            list-style: none;
-            overflow: hidden;
-        }
-
-        header li {
-            float: left;
-            display: inline;
-            padding: 0 20px;
-        }
-
         header #branding {
             display: flex;
             align-items: center;
+            margin-left: auto; /* Center the branding */
         }
 
         header #branding img {
@@ -72,10 +60,6 @@
             font-size: 2.5em;
             color: var(--primary-color);
             text-shadow: 0 0 10px var(--primary-color);
-        }
-
-        header nav {
-            margin-left: auto;
         }
 
         .auth-form {
@@ -159,14 +143,6 @@
               </a>
               <h1>CDDC</h1>
           </div>
-          <nav>
-              <ul>
-                  <li><a href="#" onclick="return checkAuth()">Home</a></li>
-                  <li><a href="#" onclick="return checkAuth()">Individuals</a></li>
-                  <li><a href="#" onclick="return checkAuth()">Subscribe</a></li>
-                  <li><a href="#" onclick="return checkAuth()">FAQ</a></li>
-              </ul>
-          </nav>
       </div>
     </header>
 

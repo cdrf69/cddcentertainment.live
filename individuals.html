@@ -30,10 +30,12 @@
 
         header {
             background: #000;
-            padding-top: 10px; /* Adjusted padding for better alignment */
+            padding: 10px 0; /* Adjusted padding for better alignment */
             min-height: 70px;
             border-bottom: var(--primary-color) 2px solid;
             border-radius: 10px;
+            display: flex; /* Use flexbox for layout */
+            align-items: center; /* Center items vertically */
         }
 
         header a {
@@ -53,11 +55,12 @@
         header li {
             float: left;
             display: inline;
-            padding: 0 20px 0 20px;
+            padding: 0 20px; /* Space between nav items */
         }
 
         header #branding {
-            float: left; /* Ensure branding is on the left */
+            display: flex; /* Use flexbox for branding */
+            align-items: center; /* Center items vertically */
         }
 
         header #branding img {
@@ -73,8 +76,7 @@
         }
 
         header nav {
-            float: right;
-            margin-top: 20px; /* Adjusted margin for better alignment */
+            margin-left: auto; /* Push navigation to the right */
         }
 
         .profile-grid {

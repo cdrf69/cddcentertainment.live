@@ -127,113 +127,137 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease;
-            margin-bottom: 10px;
         }
 
         .submit-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .toggle-form {
-            text-align: center;
-            color: var(--secondary-color);
-            cursor: pointer;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background: #000;
-            color: var(--text-color);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
+          background-color :var(--secondary-color);
+      }
+      
+      .toggle-form {
+          text-align:center ;
+          color :var (--secondary -color );
+          cursor :pointer ;
+      }
+      
+      footer {
+          text-align:center ;
+          padding :20 px ;
+          background :#000 ;
+          color :var (--text -color );
+          position :absolute ;
+          bottom :0 ;
+          width :100 % ;
+      }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <div id="branding">
-                <a href="index.html">
-                    <img src="IMG_3867.png" alt="CDDC Logo">
-                </a>
-                <h1>CDDC</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#" onclick="return checkAuth()">Home</a></li>
-                    <li><a href="#" onclick="return checkAuth()">Individuals</a></li>
-                    <li><a href="#" onclick="return checkAuth()">Subscribe</a></li>
-                    <li><a href="#" onclick="return checkAuth()">FAQ</a></li>
-                </ul>
-            </nav>
-        </div>
+      <div class="container">
+          <div id="branding">
+              <a href="index.html">
+                  <img src="IMG_3867.png" alt="CDDC Logo">
+              </a>
+              <h1>CDDC</h1>
+          </div>
+          <nav>
+              <ul>
+                  <li><a href="#" onclick="return checkAuth()">Home</a></li>
+                  <li><a href="#" onclick="return checkAuth()">Individuals</a></li>
+                  <li><a href="#" onclick="return checkAuth()">Subscribe</a></li>
+                  <li><a href="#" onclick="return checkAuth()">FAQ</a></li>
+              </ul>
+          </nav>
+      </div>
     </header>
 
     <div class="container">
-        <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
-            <h2 id="formTitle">Sign In</h2>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
-            <p class="toggle-form" onclick="toggleForm()">
-                <span id="toggleText">Don't have an account? Sign Up</span>
-            </p>
-        </form>
+      <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
+          <h2 id="formTitle">Sign In</h2>
+          <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" required>
+          </div>
+          <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required>
+          </div>
+          <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+          <p class="toggle-form" onclick="toggleForm()">
+              <span id="toggleText">Don't have an account? Sign Up</span>
+          </p>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
+          <h2 id="signUpTitle">Sign Up</h2>
+          <div class="form-group">
+              <label for="newUsername">Username</label>
+              <input type="text" id="newUsername" name="newUsername" required>
+          </div>
+          <div class="form-group">
+              <label for="newPassword">Password</label>
+              <input type="password" id="newPassword" name="newPassword" required>
+          </div>
+          <button type="submit" class="submit-btn">Sign Up</button>
+          <p class="toggle-form" onclick="toggleForm()">
+              <span id="toggleTextSignUp">Already have an account? Sign In</span>
+          </p>
+      </form>
+
     </div>
 
     <footer>
-        <p>&copy; 2024 CDDC</p>
+      <p>&copy;2024 CDDC</p >
     </footer>
 
-    <script>
-        let isAuthenticated = false;
-        let isSignUp = false;
+    <script >
+      let isAuthenticated = false ;
 
-        function toggleForm() {
-            isSignUp = !isSignUp;
-            document.getElementById('formTitle').innerText = isSignUp ? 'Sign Up' : 'Sign In';
-            document.getElementById('submitBtn').innerText = isSignUp ? 'Sign Up' : 'Sign In';
-            document.getElementById('toggleText').innerText = isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up';
-        }
+      function toggleForm () {
+           const signInForm = document.getElementById('authForm');
+           const signUpForm = document.getElementById('signUpForm');
+           if (signInForm.style.display === "none") {
+               signInForm.style.display = "block";
+               signUpForm.style.display = "none";
+           } else {
+               signInForm.style.display = "none";
+               signUpForm.style.display = "block";
+           }
+       }
 
-        function handleAuth(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+       function handleAuth (event ) {
+           event.preventDefault();
+           let username, password;
 
-            if (isSignUp) {
-                // Sign Up
-                localStorage.setItem(username, password);
-                alert('Account created successfully! Please sign in.');
-                toggleForm(); // Switch back to sign in form
-            } else {
-                // Sign In
-                const storedPassword = localStorage.getItem(username);
-                if (storedPassword && storedPassword === password) {
-                    isAuthenticated = true;
-                    alert('You are now signed in!');
-                    window.location.href = 'index.html';
-                } else {
-                    alert('Invalid username or password.');
-                }
-            }
-        }
+           if (document.getElementById('authForm').style.display === "block") { // Sign In
+               username = document.getElementById('username').value ;
+               password = document.getElementById('password').value ;
 
-        function checkAuth() {
-            if (!isAuthenticated) {
-                alert('Please sign in first.');
-                return false;
-            }
-            return true;
-        }
-    </script>
-</body>
-</html>
+               const storedPassword = localStorage.getItem(username);
+               if (storedPassword && storedPassword === password) {
+                   isAuthenticated = true ;
+                   alert ("You are now signed in!");
+                   window.location.href = "index.html";
+               } else {
+                   alert ("Invalid username or password.");
+               }
+           } else { // Sign Up
+               username = document.getElementById('newUsername').value ;
+               password = document.getElementById('newPassword').value ;
+
+               localStorage.setItem(username, password);
+               alert ("Account created successfully! Please sign in.");
+               toggleForm(); // Switch to sign in form
+           }
+       }
+
+       function checkAuth () {
+           if (!isAuthenticated) {
+               alert ("Please sign in first.");
+               return false ;
+           }
+           return true ;
+       }
+   </script >
+</body >
+</html >

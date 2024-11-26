@@ -12,19 +12,25 @@
             --text-color: #808EFF;
         }
 
-        body {
-            font-family: 'Courier New', monospace;
-            line-height: 1.6;
+        html, body {
+            height: 100%;
             margin: 0;
-            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
             background-color: var(--background-color);
             color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
         }
 
         .container {
             width: 80%;
             margin: auto;
             overflow: hidden;
+            flex-grow: 1;
         }
 
         header {
@@ -47,7 +53,7 @@
         header #branding {
             display: flex;
             align-items: center;
-            margin-left: auto; /* Center the branding */
+            margin-left: auto;
         }
 
         header #branding img {
@@ -72,208 +78,204 @@
         }
 
         .auth-form h2 {
-          color :var(--primary-color);
-          text-align:center ;
-          margin-bottom :20px ;
-      }
-      
-      .form-group {
-          margin-bottom :20px ;
-      }
-      
-      .form-group label {
-          display :block ;
-          margin-bottom :5px ;
-          color :var(--secondary-color);
-      }
-      
-      .form-group input {
-          width :100% ;
-          padding :10px ;
-          border :1px solid var(--secondary-color);
-          background-color :rgba(255 ,255 ,255 ,0.1 );
-          color :var(--text-color);
-          border-radius :5px ;
-      }
-      
-      .form-group input :focus {
-          outline :none ;
-          box-shadow :0 0 5px var(--primary-color);
-      }
-      
-      .submit-btn {
-          width :100% ;
-          padding :10px ;
-          background-color :var(--primary-color);
-          color :#000 ;
-          border :none ;
-          border-radius :5px ;
-          cursor :pointer ;
-          font-size :16px ;
-          transition :background-color 0.3s ease ;
-      }
-      
-      .submit-btn:hover {
-          background-color :var(--secondary-color);
-      }
-      
-      .toggle-form {
-          text-align:center ;
-          color :var(--secondary-color);
-          cursor :pointer ;
-      }
-      
-      footer {
-          text-align:center ;
-          padding :20px ;
-          background :#000 ;
-          color :var(--text-color);
-          position:absolute ;
-          bottom :0 ;
-          width :100% ;
-      }
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--secondary-color);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border-radius: 5px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .toggle-form {
+            text-align: center;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        footer {
+            background-color: #000;
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <header>
-      <div class="container">
-          <div id="branding">
-              <a href="index.html">
-                  <img src="IMG_3867.png" alt="CDDC Logo">
-              </a>
-              <h1>CDDC</h1>
-          </div>
-      </div>
+        <div class="container">
+            <div id="branding">
+                <a href="index.html">
+                    <img src="IMG_3867.png" alt="CDDC Logo">
+                </a>
+                <h1>CDDC</h1>
+            </div>
+        </div>
     </header>
 
     <div class="container">
-      <!-- Sign In Form -->
-      <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
-          <h2 id="formTitle">Sign In</h2>
-          <div class="form-group">
-              <label for="username">Username or Email</label>
-              <input type="text" id="username" name="username" required>
-          </div>
-          <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" id="password" name="password" required>
-          </div>
-          <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
-          <p class="toggle-form" onclick="toggleForm()">
-              <span id="toggleText">Don't have an account? Sign Up</span>
-          </p>
-      </form>
+        <!-- Sign In Form -->
+        <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
+            <h2 id="formTitle">Sign In</h2>
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+            <p class="toggle-form" onclick="toggleForm()">
+                <span id="toggleText">Don't have an account? Sign Up</span>
+            </p>
+        </form>
 
-      <!-- Sign Up Form -->
-      <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
-          <h2 id="signUpTitle">Sign Up</h2>
-          
-           <!-- Email Field -->
-           <div class="form-group">
-               <label for="email">Email</label>
-               <input type="email" id="email" name="email" required>
-           </div>
+        <!-- Sign Up Form -->
+        <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
+            <h2 id="signUpTitle">Sign Up</h2>
+            
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-           <!-- Username Field -->
-           <div class="form-group">
-               <label for="newUsername">Username</label>
-               <input type="text" id="newUsername" name="newUsername" required>
-           </div>
+            <!-- Username Field -->
+            <div class="form-group">
+                <label for="newUsername">Username</label>
+                <input type="text" id="newUsername" name="newUsername" required>
+            </div>
 
-           <!-- Password Field -->
-           <div class="form-group">
-               <label for="newPassword">Password (min. 6 characters)</label>
-               <input type="password" id="newPassword" name="newPassword" required minlength="6">
-           </div>
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="newPassword">Password (min. 6 characters)</label>
+                <input type="password" id="newPassword" name="newPassword" required minlength="6">
+            </div>
 
-           <!-- Confirm Password Field -->
-           <div class="form-group">
-               <label for="confirmPassword">Confirm Password</label>
-               <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
-           </div>
+            <!-- Confirm Password Field -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+            </div>
 
-           <!-- Submit Button -->
-           <button type="submit" class="submit-btn">Sign Up</button>
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">Sign Up</button>
 
-           <!-- Toggle Form Link -->
-           <p class="toggle-form" onclick="toggleForm()">
-               <span id="toggleTextSignUp">Already have an account? Sign In</span>
-           </p>
-
-       </form>
-
+            <!-- Toggle Form Link -->
+            <p class="toggle-form" onclick="toggleForm()">
+                <span id="toggleTextSignUp">Already have an account? Sign In</span>
+            </p>
+        </form>
     </div>
 
     <footer>
-      <p>&copy;2024 CDDC</p >
+        <p>&copy;2024 CDDC</p>
     </footer>
 
-    <script >
-      let isAuthenticated = false ;
+    <script>
+        let isAuthenticated = false;
 
-      function toggleForm () {
-           const signInForm = document.getElementById('authForm');
-           const signUpForm = document.getElementById('signUpForm');
-           if (signInForm.style.display === "none") {
-               signInForm.style.display = "block";
-               signUpForm.style.display = "none";
-           } else {
-               signInForm.style.display = "none";
-               signUpForm.style.display = "block";
-           }
-       }
+        function toggleForm() {
+            const signInForm = document.getElementById('authForm');
+            const signUpForm = document.getElementById('signUpForm');
+            if (signInForm.style.display === "none") {
+                signInForm.style.display = "block";
+                signUpForm.style.display = "none";
+            } else {
+                signInForm.style.display = "none";
+                signUpForm.style.display = "block";
+            }
+        }
 
-       function handleAuth (event ) {
-           event.preventDefault();
-           let usernameOrEmail, password;
+        function handleAuth(event) {
+            event.preventDefault();
+            let usernameOrEmail, password;
 
-           if (document.getElementById('authForm').style.display === "block") { // Sign In
-               usernameOrEmail = document.getElementById('username').value ;
-               password = document.getElementById('password').value ;
+            if (document.getElementById('authForm').style.display === "block") { // Sign In
+                usernameOrEmail = document.getElementById('username').value;
+                password = document.getElementById('password').value;
 
-               const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
-               if (userData && userData.password === password) {
-                   isAuthenticated = true ;
-                   alert ("You are now signed in!");
-                   window.location.href = "individuals.html"; // Redirect to individuals.html
-               } else {
-                   alert ("Invalid username/email or password.");
-               }
-           } else { // Sign Up
-               const email = document.getElementById('email').value ;
-               const newUsername = document.getElementById('newUsername').value ;
-               password = document.getElementById('newPassword').value ;
-               const confirmPassword = document.getElementById('confirmPassword').value ;
+                const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
+                if (userData && userData.password === password) {
+                    isAuthenticated = true;
+                    alert("You are now signed in!");
+                    window.location.href = "individuals.html"; // Redirect to individuals.html
+                } else {
+                    alert("Invalid username/email or password.");
+                }
+            } else { // Sign Up
+                const email = document.getElementById('email').value;
+                const newUsername = document.getElementById('newUsername').value;
+                password = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
 
-               if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
-                   alert ("Username or email already exists. Please choose another.");
-                   return false ;
-               }
+                if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
+                    alert("Username or email already exists. Please choose another.");
+                    return false;
+                }
 
-               if (password !== confirmPassword) {
-                   alert ("Passwords do not match.");
-                   return false ;
-               }
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return false;
+                }
 
-               if (password.length >=6 ) { // Basic password validation
-                   const userData = { email, password };
-                   localStorage.setItem(newUsername, JSON.stringify(userData));
-                   localStorage.setItem(email, JSON.stringify(userData));
-                   alert ("Account created successfully! Please sign in.");
-                   toggleForm(); // Switch to sign in form
-               } else {
-                   alert ("Password must be at least six characters long.");
-               }
-           }
-       }
+                if (password.length >= 6) { // Basic password validation
+                    const userData = { email, password };
+                    localStorage.setItem(newUsername, JSON.stringify(userData));
+                    localStorage.setItem(email, JSON.stringify(userData));
+                    alert("Account created successfully! Please sign in.");
+                    toggleForm(); // Switch to sign in form
+                } else {
+                    alert("Password must be at least six characters long.");
+                }
+            }
+        }
 
-       function checkAuth () {
-           if (!isAuthenticated) {
-               alert ("Please sign in first.");
-               return false ;
-           }
-           return true ;
-       }
-   </script >
-</body >
-</html >
+        function checkAuth() {
+            if (!isAuthenticated) {
+                alert("Please sign in first.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

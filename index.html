@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDDC - Sign In</title>
+    <title>CDDC - Sign In/Sign Up</title>
     <style>
         :root {
             --primary-color: #E380F0;
@@ -78,7 +78,7 @@
             margin-left: auto;
         }
 
-        .sign-in-form {
+        .auth-form {
             background: rgba(0, 0, 0, 0.7);
             max-width: 400px;
             margin: 50px auto;
@@ -87,7 +87,7 @@
             box-shadow: 0 0 20px var(--primary-color);
         }
 
-        .sign-in-form h2 {
+        .auth-form h2 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 20px;
@@ -127,81 +127,113 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease;
+            margin-bottom: 10px;
         }
 
         .submit-btn:hover {
-          background-color :var(--secondary-color);
-      }
-      
-      footer {
-          text-align :center ;
-          padding :20 px ;
-          background :#000 ;
-          color :var (--text -color );
-          position :absolute ;
-          bottom :0 ;
-          width :100 % ;
-      }
+            background-color: var(--secondary-color);
+        }
+
+        .toggle-form {
+            text-align: center;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background: #000;
+            color: var(--text-color);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <header>
-      <div class="container">
-          <div id="branding">
-              <a href="index.html">
-                  <img src="IMG_3867.png" alt="CDDC Logo">
-              </a>
-              <h1>CDDC</h1>
-          </div>
-          <nav>
-              <ul>
-                  <li><a href="#" onclick="return checkAuth()">Home</a></li>
-                  <li><a href="#" onclick="return checkAuth()">Individuals</a></li>
-                  <li><a href="#" onclick="return checkAuth()">Subscribe</a></li>
-                  <li><a href="#" onclick="return checkAuth()">FAQ</a></li>
-              </ul>
-          </nav>
-      </div>
+        <div class="container">
+            <div id="branding">
+                <a href="index.html">
+                    <img src="IMG_3867.png" alt="CDDC Logo">
+                </a>
+                <h1>CDDC</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="return checkAuth()">Home</a></li>
+                    <li><a href="#" onclick="return checkAuth()">Individuals</a></li>
+                    <li><a href="#" onclick="return checkAuth()">Subscribe</a></li>
+                    <li><a href="#" onclick="return checkAuth()">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <div class="container">
-      <form class="sign-in-form" onsubmit="return signIn(event)">
-          <h2>Sign In</h2>
-          <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" id="username" name="username" required>
-          </div>
-          <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" id="password" name="password" required>
-          </div>
-          <button type="submit" class="submit-btn">Sign In</button>
-      </form>
+        <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
+            <h2 id="formTitle">Sign In</h2>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+            <p class="toggle-form" onclick="toggleForm()">
+                <span id="toggleText">Don't have an account? Sign Up</span>
+            </p>
+        </form>
     </div>
 
     <footer>
-      <p>&copy;2024 CDDC</p >
+        <p>&copy; 2024 CDDC</p>
     </footer>
 
-    <script >
-      let isAuthenticated = false ;
+    <script>
+        let isAuthenticated = false;
+        let isSignUp = false;
 
-      function signIn (event ) {
-           event.preventDefault();
-           // Simulate successful sign-in
-           isAuthenticated = true ;
-           alert ("You are now signed in!");
-           // Redirect to home page or any other page
-           window.location.href = "index.html";
-       }
+        function toggleForm() {
+            isSignUp = !isSignUp;
+            document.getElementById('formTitle').innerText = isSignUp ? 'Sign Up' : 'Sign In';
+            document.getElementById('submitBtn').innerText = isSignUp ? 'Sign Up' : 'Sign In';
+            document.getElementById('toggleText').innerText = isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up';
+        }
 
-       function checkAuth () {
-           if (!isAuthenticated ) {
-               alert ("Please sign in first.");
-               return false ;
-           }
-           return true ;
-       }
-   </script >
-</body >
-</html >
+        function handleAuth(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (isSignUp) {
+                // Sign Up
+                localStorage.setItem(username, password);
+                alert('Account created successfully! Please sign in.');
+                toggleForm(); // Switch back to sign in form
+            } else {
+                // Sign In
+                const storedPassword = localStorage.getItem(username);
+                if (storedPassword && storedPassword === password) {
+                    isAuthenticated = true;
+                    alert('You are now signed in!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Invalid username or password.');
+                }
+            }
+        }
+
+        function checkAuth() {
+            if (!isAuthenticated) {
+                alert('Please sign in first.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

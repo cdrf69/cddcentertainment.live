@@ -88,36 +88,36 @@
         }
 
         .auth-form h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--secondary-color);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--secondary-color);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            border-radius: 5px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-
-        .submit-btn {
+          color :var (--primary -color );
+          text-align:center ;
+          margin -bottom :20 px ;
+      }
+      
+      .form-group {
+          margin -bottom :20 px ;
+      }
+      
+      .form-group label {
+          display :block ;
+          margin -bottom :5 px ;
+          color :var (--secondary -color );
+      }
+      
+      .form-group input {
+          width :100 % ;
+          padding :10 px ;
+          border :1 px solid var (--secondary -color );
+          background -color :rgba (255 ,255 ,255 ,0.1 );
+          color :var (--text -color );
+          border -radius :5 px ;
+      }
+      
+      .form-group input :focus {
+          outline :none ;
+          box-shadow :0 0 5 px var (--primary -color );
+      }
+      
+      .submit-btn {
           width :100 % ;
           padding :10 px ;
           background -color :var (--primary -color );
@@ -238,7 +238,7 @@
                if (storedPassword && storedPassword === password) {
                    isAuthenticated = true ;
                    alert ("You are now signed in!");
-                   window.location.href = "index.html";
+                   window.location.href = "individuals.html"; // Redirect to individuals.html
                } else {
                    alert ("Invalid username or password.");
                }

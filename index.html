@@ -72,65 +72,65 @@
         }
 
         .auth-form h2 {
-          color :var (--primary -color );
+          color :var(--primary-color);
           text-align:center ;
-          margin -bottom :20 px ;
+          margin-bottom :20px ;
       }
       
       .form-group {
-          margin -bottom :20 px ;
+          margin-bottom :20px ;
       }
       
       .form-group label {
           display :block ;
-          margin -bottom :5 px ;
-          color :var (--secondary -color );
+          margin-bottom :5px ;
+          color :var(--secondary-color);
       }
       
       .form-group input {
-          width :100 % ;
-          padding :10 px ;
-          border :1 px solid var (--secondary -color );
-          background -color :rgba (255 ,255 ,255 ,0.1 );
-          color :var (--text -color );
-          border -radius :5 px ;
+          width :100% ;
+          padding :10px ;
+          border :1px solid var(--secondary-color);
+          background-color :rgba(255 ,255 ,255 ,0.1 );
+          color :var(--text-color);
+          border-radius :5px ;
       }
       
       .form-group input :focus {
           outline :none ;
-          box-shadow :0 0 5 px var (--primary -color );
+          box-shadow :0 0 5px var(--primary-color);
       }
       
       .submit-btn {
-          width :100 % ;
-          padding :10 px ;
-          background -color :var (--primary -color );
+          width :100% ;
+          padding :10px ;
+          background-color :var(--primary-color);
           color :#000 ;
           border :none ;
-          border -radius :5 px ;
+          border-radius :5px ;
           cursor :pointer ;
-          font -size :16 px ;
-          transition :background -color 0.3 s ease ;
+          font-size :16px ;
+          transition :background-color 0.3s ease ;
       }
       
       .submit-btn:hover {
-          background -color :var (--secondary -color );
+          background-color :var(--secondary-color);
       }
       
       .toggle-form {
           text-align:center ;
-          color :var (--secondary -color );
+          color :var(--secondary-color);
           cursor :pointer ;
       }
       
       footer {
           text-align:center ;
-          padding :20 px ;
+          padding :20px ;
           background :#000 ;
-          color :var (--text -color );
-          position :absolute ;
+          color :var(--text-color);
+          position:absolute ;
           bottom :0 ;
-          width :100 % ;
+          width :100% ;
       }
     </style>
 </head>
@@ -151,7 +151,7 @@
       <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
           <h2 id="formTitle">Sign In</h2>
           <div class="form-group">
-              <label for="username">Username</label>
+              <label for="username">Username or Email</label>
               <input type="text" id="username" name="username" required>
           </div>
           <div class="form-group">
@@ -225,28 +225,28 @@
 
        function handleAuth (event ) {
            event.preventDefault();
-           let username, password;
+           let usernameOrEmail, password;
 
            if (document.getElementById('authForm').style.display === "block") { // Sign In
-               username = document.getElementById('username').value ;
+               usernameOrEmail = document.getElementById('username').value ;
                password = document.getElementById('password').value ;
 
-               const storedPassword = localStorage.getItem(username);
-               if (storedPassword && storedPassword === password) {
+               const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
+               if (userData && userData.password === password) {
                    isAuthenticated = true ;
                    alert ("You are now signed in!");
                    window.location.href = "individuals.html"; // Redirect to individuals.html
                } else {
-                   alert ("Invalid username or password.");
+                   alert ("Invalid username/email or password.");
                }
            } else { // Sign Up
                const email = document.getElementById('email').value ;
-               username = document.getElementById('newUsername').value ;
+               const newUsername = document.getElementById('newUsername').value ;
                password = document.getElementById('newPassword').value ;
                const confirmPassword = document.getElementById('confirmPassword').value ;
 
-               if (localStorage.getItem(username)) {
-                   alert ("Username already exists. Please choose another.");
+               if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
+                   alert ("Username or email already exists. Please choose another.");
                    return false ;
                }
 
@@ -256,7 +256,9 @@
                }
 
                if (password.length >=6 ) { // Basic password validation
-                   localStorage.setItem(username, JSON.stringify({ email, password }));
+                   const userData = { email, password };
+                   localStorage.setItem(newUsername, JSON.stringify(userData));
+                   localStorage.setItem(email, JSON.stringify(userData));
                    alert ("Account created successfully! Please sign in.");
                    toggleForm(); // Switch to sign in form
                } else {

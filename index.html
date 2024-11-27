@@ -15,11 +15,13 @@
         html, body {
             height: 100%;
             margin: 0;
+            padding: 0;
         }
 
         body {
             display: flex;
             flex-direction: column;
+            min-height: 100vh; /* Full viewport height */
             background-color: var(--background-color);
             color: var(--text-color);
             font-family: 'Courier New', monospace;
@@ -29,9 +31,23 @@
         .container {
             width: 80%;
             margin: auto;
-            overflow: hidden;
-            flex-grow: 1;
-            padding-bottom: 100px; /* Add extra padding at the bottom */
+            flex-grow: 1; /* Allow container to grow */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            padding-bottom: 50px; /* Add some bottom padding */
+        }
+
+        .auth-form {
+            background: rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--primary-color);
+            position: relative;
+            z-index: 10; /* Ensure form is above footer */
         }
 
         header {
@@ -54,7 +70,7 @@
         header #branding {
             display: flex;
             align-items: center;
-            margin-left: auto;
+            margin-left: auto; /* Center the branding */
         }
 
         header #branding img {
@@ -69,80 +85,68 @@
             text-shadow: 0 0 10px var(--primary-color);
         }
 
-        .auth-form {
-            background: rgba(0, 0, 0, 0.7);
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--primary-color);
-            position: relative;
-            z-index: 1; /* Ensure form is above footer */
-        }
-
         .auth-form h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
+            color :var(--primary-color);
+            text-align:center ;
+            margin-bottom :20px ;
         }
-
+        
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom :20px ;
         }
-
+        
         .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--secondary-color);
+            display :block ;
+            margin-bottom :5px ;
+            color :var(--secondary-color);
         }
-
+        
         .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--secondary-color);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            border-radius: 5px;
+            width :100% ;
+            padding :10px ;
+            border :1px solid var(--secondary-color);
+            background-color :rgba(255 ,255 ,255 ,0.1 );
+            color :var(--text-color);
+            border-radius :5px ;
         }
-
+        
         .form-group input:focus {
-            outline: none;
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .toggle-form {
-            text-align: center;
-            color: var(--secondary-color);
-            cursor: pointer;
-        }
-
-        footer {
-            background-color: #000;
-            color: var(--text-color);
-            text-align: center;
-            padding: 20px;
-            width: 100%;
-            flex-shrink: 0; /* Prevent footer from shrinking */
-            margin-top: auto; /* Push footer to bottom */
-            position: relative;
-            z-index: 0;
-        }
+             outline :none ;
+             box-shadow :0 0 5px var(--primary-color);
+         }
+        
+         .submit-btn {
+             width :100% ;
+             padding :10px ;
+             background-color :var(--primary-color);
+             color :#000 ;
+             border :none ;
+             border-radius :5px ;
+             cursor :pointer ;
+             font-size :16px ;
+             transition :background-color 0.3s ease ;
+         }
+        
+         .submit-btn:hover {
+             background-color :var(--secondary-color);
+         }
+        
+         .toggle-form {
+             text-align:center ;
+             color :var(--secondary-color);
+             cursor :pointer ;
+         }
+        
+         footer {
+             background-color:#000 ;
+             color :var(--text-color);
+             text-align:center ;
+             padding :20px ;
+             width :100%;
+             margin-top:auto; /* Push footer to bottom */
+             position:absolute; /* Position it at the bottom */
+             bottom:0; /* Align to the bottom */
+         }
     </style>
 </head>
 <body>
@@ -161,55 +165,55 @@
         <!-- Sign In Form -->
         <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
             <h2 id="formTitle">Sign In</h2>
-            <div class="form-group">
-                <label for="username">Username or Email</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
-            <p class="toggle-form" onclick="toggleForm()">
-                <span id="toggleText">Don't have an account? Sign Up</span>
-            </p>
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+                <p class="toggle-form" onclick="toggleForm()">
+                    <span id="toggleText">Don't have an account? Sign Up</span>
+                </p>
         </form>
 
         <!-- Sign Up Form -->
         <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
-            <h2 id="signUpTitle">Sign Up</h2>
-            
-            <!-- Email Field -->
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+                <h2 id="signUpTitle">Sign Up</h2>
 
-            <!-- Username Field -->
-            <div class="form-group">
-                <label for="newUsername">Username</label>
-                <input type="text" id="newUsername" name="newUsername" required>
-            </div>
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
 
-            <!-- Password Field -->
-            <div class="form-group">
-                <label for="newPassword">Password (min. 6 characters)</label>
-                <input type="password" id="newPassword" name="newPassword" required minlength="6">
-            </div>
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="newUsername">Username</label>
+                    <input type="text" id="newUsername" name="newUsername" required>
+                </div>
 
-            <!-- Confirm Password Field -->
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
-            </div>
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="newPassword">Password (min. 6 characters)</label>
+                    <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">Sign Up</button>
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                </div>
 
-            <!-- Toggle Form Link -->
-            <p class="toggle-form" onclick="toggleForm()">
-                <span id="toggleTextSignUp">Already have an account? Sign In</span>
-            </p>
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">Sign Up</button>
+
+                <!-- Toggle Form Link -->
+                <p class="toggle-form" onclick="toggleForm()">
+                    <span id="toggleTextSignUp">Already have an account? Sign In</span>
+                </p>
         </form>
     </div>
 
@@ -221,68 +225,68 @@
         let isAuthenticated = false;
 
         function toggleForm() {
-            const signInForm = document.getElementById('authForm');
-            const signUpForm = document.getElementById('signUpForm');
-            if (signInForm.style.display === "none") {
-                signInForm.style.display = "block";
-                signUpForm.style.display = "none";
-            } else {
-                signInForm.style.display = "none";
-                signUpForm.style.display = "block";
-            }
-        }
+           const signInForm = document.getElementById('authForm');
+           const signUpForm = document.getElementById('signUpForm');
+           if (signInForm.style.display === "none") {
+               signInForm.style.display = "block";
+               signUpForm.style.display = "none";
+           } else {
+               signInForm.style.display = "none";
+               signUpForm.style.display = "block";
+           }
+       }
 
-        function handleAuth(event) {
-            event.preventDefault();
-            let usernameOrEmail, password;
+       function handleAuth(event) {
+           event.preventDefault();
+           let usernameOrEmail, password;
 
-            if (document.getElementById('authForm').style.display === "block") { // Sign In
-                usernameOrEmail = document.getElementById('username').value;
-                password = document.getElementById('password').value;
+           if (document.getElementById('authForm').style.display === "block") { // Sign In
+               usernameOrEmail = document.getElementById('username').value;
+               password = document.getElementById('password').value;
 
-                const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
-                if (userData && userData.password === password) {
-                    isAuthenticated = true;
-                    alert("You are now signed in!");
-                    window.location.href = "individuals.html"; // Redirect to individuals.html
-                } else {
-                    alert("Invalid username/email or password.");
-                }
-            } else { // Sign Up
-                const email = document.getElementById('email').value;
-                const newUsername = document.getElementById('newUsername').value;
-                password = document.getElementById('newPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
+               const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
+               if (userData && userData.password === password) {
+                   isAuthenticated = true;
+                   alert("You are now signed in!");
+                   window.location.href = "individuals.html"; // Redirect to individuals.html
+               } else {
+                   alert("Invalid username/email or password.");
+               }
+           } else { // Sign Up
+               const email = document.getElementById('email').value;
+               const newUsername = document.getElementById('newUsername').value;
+               password = document.getElementById('newPassword').value;
+               const confirmPassword = document.getElementById('confirmPassword').value;
 
-                if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
-                    alert("Username or email already exists. Please choose another.");
-                    return false;
-                }
+               if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
+                   alert("Username or email already exists. Please choose another.");
+                   return false;
+               }
 
-                if (password !== confirmPassword) {
-                    alert("Passwords do not match.");
-                    return false;
-                }
+               if (password !== confirmPassword) {
+                   alert("Passwords do not match.");
+                   return false;
+               }
 
-                if (password.length >= 6) { // Basic password validation
-                    const userData = { email, password };
-                    localStorage.setItem(newUsername, JSON.stringify(userData));
-                    localStorage.setItem(email, JSON.stringify(userData));
-                    alert("Account created successfully! Please sign in.");
-                    toggleForm(); // Switch to sign in form
-                } else {
-                    alert("Password must be at least six characters long.");
-                }
-            }
-        }
+               if (password.length >=6 ) { // Basic password validation
+                   const userData = { email, password };
+                   localStorage.setItem(newUsername, JSON.stringify(userData));
+                   localStorage.setItem(email, JSON.stringify(userData));
+                   alert ("Account created successfully! Please sign in.");
+                   toggleForm(); // Switch to sign in form
+               } else {
+                   alert ("Password must be at least six characters long.");
+               }
+           }
+       }
 
-        function checkAuth() {
-            if (!isAuthenticated) {
-                alert("Please sign in first.");
-                return false;
-            }
-            return true;
-        }
-    </script>
-</body>
-</html>
+       function checkAuth() {
+           if (!isAuthenticated) {
+               alert ("Please sign in first.");
+               return false ;
+           }
+           return true ;
+       }
+   </script >
+</body >
+</html >

@@ -21,7 +21,7 @@
         body {
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Full viewport height */
+            min-height: 100vh;
             background-color: var(--background-color);
             color: var(--text-color);
             font-family: 'Courier New', monospace;
@@ -31,23 +31,7 @@
         .container {
             width: 80%;
             margin: auto;
-            flex-grow: 1; /* Allow container to grow */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Center content vertically */
-            padding-bottom: 50px; /* Add some bottom padding */
-        }
-
-        .auth-form {
-            background: rgba(0, 0, 0, 0.7);
-            max-width: 400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--primary-color);
-            position: relative;
-            z-index: 10; /* Ensure form is above footer */
+            overflow: hidden;
         }
 
         header {
@@ -57,6 +41,7 @@
             border-bottom: var(--primary-color) 2px solid;
             border-radius: 10px;
             display: flex;
+            justify-content: flex-end;
             align-items: center;
         }
 
@@ -70,7 +55,6 @@
         header #branding {
             display: flex;
             align-items: center;
-            margin-left: auto; /* Center the branding */
         }
 
         header #branding img {
@@ -85,68 +69,83 @@
             text-shadow: 0 0 10px var(--primary-color);
         }
 
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px 0;
+        }
+
+        .auth-form {
+            background: rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
         .auth-form h2 {
-            color :var(--primary-color);
-            text-align:center ;
-            margin-bottom :20px ;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
         }
         
         .form-group {
-            margin-bottom :20px ;
+            margin-bottom: 20px;
         }
         
         .form-group label {
-            display :block ;
-            margin-bottom :5px ;
-            color :var(--secondary-color);
+            display: block;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
         }
         
         .form-group input {
-            width :100% ;
-            padding :10px ;
-            border :1px solid var(--secondary-color);
-            background-color :rgba(255 ,255 ,255 ,0.1 );
-            color :var(--text-color);
-            border-radius :5px ;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--secondary-color);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border-radius: 5px;
         }
         
         .form-group input:focus {
-             outline :none ;
-             box-shadow :0 0 5px var(--primary-color);
-         }
+            outline: none;
+            box-shadow: 0 0 5px var(--primary-color);
+        }
         
-         .submit-btn {
-             width :100% ;
-             padding :10px ;
-             background-color :var(--primary-color);
-             color :#000 ;
-             border :none ;
-             border-radius :5px ;
-             cursor :pointer ;
-             font-size :16px ;
-             transition :background-color 0.3s ease ;
-         }
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
         
-         .submit-btn:hover {
-             background-color :var(--secondary-color);
-         }
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
         
-         .toggle-form {
-             text-align:center ;
-             color :var(--secondary-color);
-             cursor :pointer ;
-         }
+        .toggle-form {
+            text-align: center;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
         
-         footer {
-             background-color:#000 ;
-             color :var(--text-color);
-             text-align:center ;
-             padding :20px ;
-             width :100%;
-             margin-top:auto; /* Push footer to bottom */
-             position:absolute; /* Position it at the bottom */
-             bottom:0; /* Align to the bottom */
-         }
+        footer {
+            background-color: #000;
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -161,10 +160,11 @@
         </div>
     </header>
 
-    <div class="container">
-        <!-- Sign In Form -->
-        <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
-            <h2 id="formTitle">Sign In</h2>
+    <div class="main-content">
+        <div class="container">
+            <!-- Sign In Form -->
+            <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
+                <h2 id="formTitle">Sign In</h2>
                 <div class="form-group">
                     <label for="username">Username or Email</label>
                     <input type="text" id="username" name="username" required>
@@ -177,12 +177,12 @@
                 <p class="toggle-form" onclick="toggleForm()">
                     <span id="toggleText">Don't have an account? Sign Up</span>
                 </p>
-        </form>
+            </form>
 
-        <!-- Sign Up Form -->
-        <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
+            <!-- Sign Up Form -->
+            <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
                 <h2 id="signUpTitle">Sign Up</h2>
-
+                
                 <!-- Email Field -->
                 <div class="form-group">
                     <label for="email">Email</label>
@@ -214,7 +214,8 @@
                 <p class="toggle-form" onclick="toggleForm()">
                     <span id="toggleTextSignUp">Already have an account? Sign In</span>
                 </p>
-        </form>
+            </form>
+        </div>
     </div>
 
     <footer>
@@ -225,68 +226,68 @@
         let isAuthenticated = false;
 
         function toggleForm() {
-           const signInForm = document.getElementById('authForm');
-           const signUpForm = document.getElementById('signUpForm');
-           if (signInForm.style.display === "none") {
-               signInForm.style.display = "block";
-               signUpForm.style.display = "none";
-           } else {
-               signInForm.style.display = "none";
-               signUpForm.style.display = "block";
-           }
-       }
+            const signInForm = document.getElementById('authForm');
+            const signUpForm = document.getElementById('signUpForm');
+            if (signInForm.style.display === "none") {
+                signInForm.style.display = "block";
+                signUpForm.style.display = "none";
+            } else {
+                signInForm.style.display = "none";
+                signUpForm.style.display = "block";
+            }
+        }
 
-       function handleAuth(event) {
-           event.preventDefault();
-           let usernameOrEmail, password;
+        function handleAuth(event) {
+            event.preventDefault();
+            let usernameOrEmail, password;
 
-           if (document.getElementById('authForm').style.display === "block") { // Sign In
-               usernameOrEmail = document.getElementById('username').value;
-               password = document.getElementById('password').value;
+            if (document.getElementById('authForm').style.display === "block") { // Sign In
+                usernameOrEmail = document.getElementById('username').value;
+                password = document.getElementById('password').value;
 
-               const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
-               if (userData && userData.password === password) {
-                   isAuthenticated = true;
-                   alert("You are now signed in!");
-                   window.location.href = "individuals.html"; // Redirect to individuals.html
-               } else {
-                   alert("Invalid username/email or password.");
-               }
-           } else { // Sign Up
-               const email = document.getElementById('email').value;
-               const newUsername = document.getElementById('newUsername').value;
-               password = document.getElementById('newPassword').value;
-               const confirmPassword = document.getElementById('confirmPassword').value;
+                const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
+                if (userData && userData.password === password) {
+                    isAuthenticated = true;
+                    alert("You are now signed in!");
+                    window.location.href = "individuals.html"; // Redirect to individuals.html
+                } else {
+                    alert("Invalid username/email or password.");
+                }
+            } else { // Sign Up
+                const email = document.getElementById('email').value;
+                const newUsername = document.getElementById('newUsername').value;
+                password = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
 
-               if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
-                   alert("Username or email already exists. Please choose another.");
-                   return false;
-               }
+                if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
+                    alert("Username or email already exists. Please choose another.");
+                    return false;
+                }
 
-               if (password !== confirmPassword) {
-                   alert("Passwords do not match.");
-                   return false;
-               }
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return false;
+                }
 
-               if (password.length >=6 ) { // Basic password validation
-                   const userData = { email, password };
-                   localStorage.setItem(newUsername, JSON.stringify(userData));
-                   localStorage.setItem(email, JSON.stringify(userData));
-                   alert ("Account created successfully! Please sign in.");
-                   toggleForm(); // Switch to sign in form
-               } else {
-                   alert ("Password must be at least six characters long.");
-               }
-           }
-       }
+                if (password.length >= 6) { // Basic password validation
+                    const userData = { email, password };
+                    localStorage.setItem(newUsername, JSON.stringify(userData));
+                    localStorage.setItem(email, JSON.stringify(userData));
+                    alert("Account created successfully! Please sign in.");
+                    toggleForm(); // Switch to sign in form
+                } else {
+                    alert("Password must be at least six characters long.");
+                }
+            }
+        }
 
-       function checkAuth() {
-           if (!isAuthenticated) {
-               alert ("Please sign in first.");
-               return false ;
-           }
-           return true ;
-       }
-   </script >
-</body >
-</html >
+        function checkAuth() {
+            if (!isAuthenticated) {
+                alert("Please sign in first.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

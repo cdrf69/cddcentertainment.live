@@ -241,7 +241,7 @@
             event.preventDefault();
             let usernameOrEmail, password;
 
-            if (document.getElementById('authForm').style.display === "block") { // Sign In
+            if (document.getElementById('authForm').style.display !== "none") { // Sign In
                 usernameOrEmail = document.getElementById('username').value;
                 password = document.getElementById('password').value;
 
@@ -269,15 +269,16 @@
                     return false;
                 }
 
-                if (password.length >= 6) { // Basic password validation
-                    const userData = { email, password };
-                    localStorage.setItem(newUsername, JSON.stringify(userData));
-                    localStorage.setItem(email, JSON.stringify(userData));
-                    alert("Account created successfully! Please sign in.");
-                    toggleForm(); // Switch to sign in form
-                } else {
+                if (password.length < 6) {
                     alert("Password must be at least six characters long.");
+                    return false;
                 }
+
+                const userData = { email, password };
+                localStorage.setItem(newUsername, JSON.stringify(userData));
+                localStorage.setItem(email, JSON.stringify(userData));
+                alert("Account created successfully! Please sign in.");
+                toggleForm(); // Switch to sign in form
             }
         }
 

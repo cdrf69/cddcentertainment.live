@@ -35,6 +35,7 @@
             border-radius: 10px;
             display: flex;
             align-items: center;
+            position: relative;
         }
 
         header a {
@@ -123,6 +124,7 @@
             position: absolute;
             right: 20px;
             top: 20px;
+            z-index: 1000;
         }
 
         .dropdown-menu {
@@ -136,6 +138,7 @@
             border: 2px solid var(--primary-color);
             border-radius: 10px;
             transition: all 0.3s ease;
+            z-index: 999;
         }
 
         .dropdown-menu.show {

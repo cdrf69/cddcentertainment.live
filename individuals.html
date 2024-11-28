@@ -117,11 +117,12 @@
     </style>
 </head>
 <body>
-    <script>
-        // Check if the user is signed in
-        if (localStorage.getItem("isSignedIn") !== "true") {
-            // Redirect to index.html if not signed in
-            window.location.href = "index.html";
+    <script>$1window.location.href = "index.html";
+        }
+
+        // Prevent accessing sign-in page if already signed in
+        if (window.location.pathname.includes('index.html') && localStorage.getItem("isSignedIn") === "true") {
+            window.location.href = "individuals.html";
         }
     </script>
 

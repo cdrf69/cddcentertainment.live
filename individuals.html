@@ -11,7 +11,7 @@
         setTimeout("preventBack()", 0);
         window.onunload = function () { null };
 
-        // Check if user is logged in, if not, redirect to sign-in page
+        // Check if user is logged in
         if (!sessionStorage.getItem('loggedIn')) {
             window.location.href = 'signin.html';
         }
@@ -140,7 +140,7 @@
           <nav>
               <ul>
                   <li><a href="individuals.html">Home</a></li>
-                  <li><a href="javascript:void(0);" onclick="signOut()">Sign Out</a></li>
+                  <li><a href="#" onclick="signOut()">Sign Out</a></li>
               </ul>
           </nav>
       </div>

@@ -223,8 +223,6 @@
     </footer>
 
     <script>
-        let isAuthenticated = false;
-
         function toggleForm() {
             const signInForm = document.getElementById('authForm');
             const signUpForm = document.getElementById('signUpForm');
@@ -247,7 +245,8 @@
 
                 const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
                 if (userData && userData.password === password) {
-                    isAuthenticated = true;
+                    // Save sign-in state to localStorage
+                    localStorage.setItem("isSignedIn", "true");
                     alert("You are now signed in!");
                     window.location.href = "individuals.html"; // Redirect to individuals.html
                 } else {
@@ -269,25 +268,12 @@
                     return false;
                 }
 
-                if (password.length < 6) {
-                    alert("Password must be at least six characters long.");
-                    return false;
-                }
-
                 const userData = { email, password };
                 localStorage.setItem(newUsername, JSON.stringify(userData));
                 localStorage.setItem(email, JSON.stringify(userData));
                 alert("Account created successfully! Please sign in.");
                 toggleForm(); // Switch to sign in form
             }
-        }
-
-        function checkAuth() {
-            if (!isAuthenticated) {
-                alert("Please sign in first.");
-                return false;
-            }
-            return true;
         }
     </script>
 </body>

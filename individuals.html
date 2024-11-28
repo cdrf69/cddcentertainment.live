@@ -52,9 +52,7 @@
         }
 
         header li {
-            float: left;
-            display: inline;
-            padding: 0 20px;
+            padding: 10px;
         }
 
         header #branding {
@@ -76,6 +74,7 @@
 
         header nav {
             margin-left: auto;
+            position: relative;
         }
 
         .profile-grid {
@@ -136,13 +135,11 @@
             padding: 10px;
             border: 2px solid var(--primary-color);
             border-radius: 10px;
-            transform: scaleY(0);
-            transform-origin: top;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .dropdown-menu.show {
-            transform: scaleY(1);
+            display: block;
         }
 
         .dropdown-menu li {
@@ -236,14 +233,10 @@
     </footer>
 
     <script>
-    function toggleDropdown() {
-        const dropdown = document.getElementById('dropdownMenu');
-        if (dropdown.style.display === 'block') {
-            dropdown.style.display = 'none';
-        } else {
-            dropdown.style.display = 'block';
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
         }
-    }
-</script>
+    </script>
 </body>
 </html>

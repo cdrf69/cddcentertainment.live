@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CDDC</title>
+    <script>
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+
+        // Check if user is logged in, if not, redirect to sign-in page
+        if (!sessionStorage.getItem('loggedIn')) {
+            window.location.href = 'signin.html';
+        }
+    </script>
     <style>
         /* Updated Cyberpunk theme with softer colors */
         :root {
@@ -120,14 +132,15 @@
     <header>
         <div class="container">
           <div id="branding">
-              <a href="index.html">
+              <a href="individuals.html">
                   <img src="IMG_3867.png" alt="CDDC Logo">
               </a>
               <h1>CDDC</h1>
           </div>
           <nav>
               <ul>
-                  <li><a href="index.html">Home</a></li>
+                  <li><a href="individuals.html">Home</a></li>
+                  <li><a href="javascript:void(0);" onclick="signOut()">Sign Out</a></li>
               </ul>
           </nav>
       </div>
@@ -174,5 +187,12 @@
     <footer>
       <p>&copy; 2024 CDDC</p>
     </footer>
+
+    <script>
+        function signOut() {
+            sessionStorage.removeItem('loggedIn');
+            window.location.href = 'signin.html';
+        }
+    </script>
 </body>
 </html>

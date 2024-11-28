@@ -154,6 +154,41 @@
             color: var(--text-color);
             margin-left: auto;
             padding: 10px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #000;
+            right: 20px;
+            top: 60px;
+            list-style-type: none;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            transform: scaleY(1);
+        }
+
+        .dropdown-menu li {
+            padding: 10px;
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            color: var(--primary-color);
         }
 
         .dropdown-menu {
@@ -184,7 +219,7 @@
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdownMenu');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            dropdown.classList.toggle('show');
         }
     </script>
 

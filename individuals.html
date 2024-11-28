@@ -134,12 +134,57 @@
                 </a>
                 <h1>CDDC</h1>
             </div>
-            $1
+            <nav>
+                <div class="menu-icon" onclick="toggleDropdown()">
+                    &#9776;
+                </div>
+                <ul id="dropdownMenu" class="dropdown-menu">
+                    <li><a href="individuals.html">Home</a></li>
                     <li><a href="settings.html">Settings</a></li>
                 </ul>
             </nav>
         </div>
     </header>
+    <style>
+        .menu-icon {
+            font-size: 30px;
+            cursor: pointer;
+            color: var(--text-color);
+            margin-left: auto;
+            padding: 10px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #000;
+            right: 20px;
+            top: 60px;
+            list-style-type: none;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .dropdown-menu li {
+            padding: 10px;
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
 
     <div class="container">
         <h2>Welcome to CDDC</h2>

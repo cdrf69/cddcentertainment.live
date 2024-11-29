@@ -63,13 +63,13 @@
         }
 
         header #branding img {
-            max-height: 100px;
+            max-height: 70px;
             margin-right: 10px;
         }
 
         header #branding h1 {
             margin: 0;
-            font-size: 2.5em;
+            font-size: 2em;
             color: var(--primary-color);
             text-shadow: 0 0 10px var(--primary-color);
         }
@@ -123,18 +123,14 @@
             font-size: 30px;
             cursor: pointer;
             color: var(--text-color);
-            padding: 10px;
-            position: relative;
+            padding: 0;
+            position: absolute;
+            top: 20px;
+            right: 20px;
             z-index: 1001;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-        }
-
-        header nav .menu-icon {
-            margin-left: auto;
-            right: 0;
-            top: 0;
         }
 
         .dropdown-menu {
@@ -142,7 +138,7 @@
             position: fixed;
             background-color: #000;
             right: 20px;
-            top: 80px;
+            top: 70px;
             list-style-type: none;
             padding: 10px;
             border: 2px solid var(--primary-color);

@@ -12,14 +12,22 @@
             padding: 0;
             background-color: #2F2D37;
             color: #808EFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             width: 80%;
-            margin: auto;
-            overflow: hidden;
+            max-width: 1000px;
+            background-color: #1E1C24;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(128, 142, 255, 0.2);
         }
         h1, h2 {
             color: #E380F0;
+            text-align: center;
         }
         button {
             background-color: #E380F0;
@@ -29,24 +37,110 @@
             margin: 5px;
             cursor: pointer;
             font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #C060D0;
+        }
+        button:disabled {
+            background-color: #6B5B6F;
+            cursor: not-allowed;
         }
         #game-area {
             margin-top: 20px;
         }
-        #dealer-hand, #player-hand {
+        .hand {
+            display: flex;
+            justify-content: center;
+            min-height: 150px;
             margin-bottom: 20px;
+        }
+        .card {
+            width: 100px;
+            height: 140px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            margin: 0 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #000000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .card.red {
+            color: #FF0000;
+        }
+        .card::before,
+        .card::after {
+            content: attr(data-value);
+            position: absolute;
+            font-size: 16px;
+        }
+        .card::before {
+            top: 5px;
+            left: 5px;
+        }
+        .card::after {
+            bottom: 5px;
+            right: 5px;
+            transform: rotate(180deg);
+        }
+        #actions, #bet-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #bet-amount {
+            width: 100px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        #message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            min-height: 27px;
+        }
+        .score {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #tokens-display {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        @keyframes dealCard {
+            from {
+                transform: translateY(-200px) rotate(720deg);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        .deal-animation {
+            animation: dealCard 0.5s ease-out;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Black Jack</h1>
-        <p>Welcome to Black Jack! Play Smart, Win Big!</p>
+        <div id="tokens-display">Tokens: <span id="tokens">1000</span></div>
         <div id="game-area">
-            <h2>Dealer's Hand: <span id="dealer-score"></span></h2>
-            <div id="dealer-hand"></div>
-            <h2>Your Hand: <span id="player-score"></span></h2>
-            <div id="player-hand"></div>
+            <h2>Dealer's Hand</h2>
+            <div class="score">Score: <span id="dealer-score"></span></div>
+            <div id="dealer-hand" class="hand"></div>
+            <h2>Your Hand</h2>
+            <div class="score">Score: <span id="player-score"></span></div>
+            <div id="player-hand" class="hand"></div>
             <div id="actions">
                 <button id="hit">Hit</button>
                 <button id="stand">Stand</button>
@@ -54,13 +148,12 @@
                 <button id="split" style="display:none;">Split</button>
             </div>
             <div id="bet-area">
-                <p>Tokens: <span id="tokens">1000</span></p>
                 <input type="number" id="bet-amount" min="10" max="1000" step="10" value="10">
                 <button id="place-bet">Place Bet</button>
             </div>
             <p id="message"></p>
         </div>
-        <a href="individuals.html">Back to Games</a>
+        <a href="individuals.html" style="display: block; text-align: center; margin-top: 20px; color: #E380F0;">Back to Games</a>
     </div>
 
     <script>
@@ -134,11 +227,39 @@
             return score;
         }
 
+        // Create card element
+        function createCardElement(card, faceUp = true) {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'card deal-animation';
+            if (faceUp) {
+                cardEl.textContent = card.suit;
+                cardEl.dataset.value = card.value;
+                if (card.suit === '♥' || card.suit === '♦') {
+                    cardEl.classList.add('red');
+                }
+            } else {
+                cardEl.textContent = '?';
+                cardEl.style.backgroundColor = '#808EFF';
+            }
+            return cardEl;
+        }
+
         // Update UI
         function updateUI() {
-            dealerHandEl.textContent = dealerHand.map(card => `${card.value}${card.suit}`).join(' ');
-            playerHandEl.textContent = playerHand.map(card => `${card.value}${card.suit}`).join(' ');
-            dealerScoreEl.textContent = gameInProgress ? dealerHand[0].value : dealerScore;
+            dealerHandEl.innerHTML = '';
+            playerHandEl.innerHTML = '';
+            
+            dealerHand.forEach((card, index) => {
+                const cardEl = createCardElement(card, index === 0 || !gameInProgress);
+                dealerHandEl.appendChild(cardEl);
+            });
+
+            playerHand.forEach(card => {
+                const cardEl = createCardElement(card);
+                playerHandEl.appendChild(cardEl);
+            });
+
+            dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
             playerScoreEl.textContent = playerScore;
             tokensEl.textContent = tokens;
         }
@@ -160,7 +281,7 @@
         function checkForBlackjack() {
             if (playerScore === 21) {
                 endGame('Blackjack! You win!');
-                tokens += currentBet * 1.5;
+                tokens += Math.floor(currentBet * 1.5);
             } else if (dealerScore === 21) {
                 endGame('Dealer has Blackjack. You lose.');
                 tokens -= currentBet;
@@ -180,6 +301,7 @@
 
         // Player stand
         function playerStand() {
+            gameInProgress = false;
             while (dealerScore < 17) {
                 dealerHand.push(dealCard());
                 dealerScore = calculateScore(dealerHand);

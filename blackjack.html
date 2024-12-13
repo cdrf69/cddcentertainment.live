@@ -131,3 +131,134 @@
                 score -= 10;
                 aces -= 1;
             }
+            return score;
+        }
+
+        // Update UI
+        function updateUI() {
+            dealerHandEl.textContent = dealerHand.map(card => `${card.value}${card.suit}`).join(' ');
+            playerHandEl.textContent = playerHand.map(card => `${card.value}${card.suit}`).join(' ');
+            dealerScoreEl.textContent = gameInProgress ? dealerHand[0].value : dealerScore;
+            playerScoreEl.textContent = playerScore;
+            tokensEl.textContent = tokens;
+        }
+
+        // Start new game
+        function startNewGame() {
+            createDeck();
+            shuffleDeck();
+            playerHand = [dealCard(), dealCard()];
+            dealerHand = [dealCard(), dealCard()];
+            playerScore = calculateScore(playerHand);
+            dealerScore = calculateScore(dealerHand);
+            gameInProgress = true;
+            updateUI();
+            checkForBlackjack();
+        }
+
+        // Check for blackjack
+        function checkForBlackjack() {
+            if (playerScore === 21) {
+                endGame('Blackjack! You win!');
+                tokens += currentBet * 1.5;
+            } else if (dealerScore === 21) {
+                endGame('Dealer has Blackjack. You lose.');
+                tokens -= currentBet;
+            }
+        }
+
+        // Player hit
+        function playerHit() {
+            playerHand.push(dealCard());
+            playerScore = calculateScore(playerHand);
+            updateUI();
+            if (playerScore > 21) {
+                endGame('Bust! You lose.');
+                tokens -= currentBet;
+            }
+        }
+
+        // Player stand
+        function playerStand() {
+            while (dealerScore < 17) {
+                dealerHand.push(dealCard());
+                dealerScore = calculateScore(dealerHand);
+            }
+            updateUI();
+            if (dealerScore > 21) {
+                endGame('Dealer busts! You win!');
+                tokens += currentBet;
+            } else if (dealerScore > playerScore) {
+                endGame('Dealer wins.');
+                tokens -= currentBet;
+            } else if (dealerScore < playerScore) {
+                endGame('You win!');
+                tokens += currentBet;
+            } else {
+                endGame('It\'s a tie.');
+            }
+        }
+
+        // Player double
+        function playerDouble() {
+            if (tokens >= currentBet * 2) {
+                tokens -= currentBet;
+                currentBet *= 2;
+                playerHit();
+                if (playerScore <= 21) {
+                    playerStand();
+                }
+            } else {
+                messageEl.textContent = 'Not enough tokens to double.';
+            }
+        }
+
+        // End game
+        function endGame(message) {
+            gameInProgress = false;
+            messageEl.textContent = message;
+            hitButton.disabled = true;
+            standButton.disabled = true;
+            doubleButton.disabled = true;
+            splitButton.disabled = true;
+            betButton.disabled = false;
+            betInput.disabled = false;
+            updateUI();
+        }
+
+        // Place bet
+        function placeBet() {
+            const betAmount = parseInt(betInput.value);
+            if (betAmount > tokens) {
+                messageEl.textContent = 'Not enough tokens.';
+                return;
+            }
+            if (betAmount < 10) {
+                messageEl.textContent = 'Minimum bet is 10 tokens.';
+                return;
+            }
+            currentBet = betAmount;
+            tokens -= currentBet;
+            startNewGame();
+            hitButton.disabled = false;
+            standButton.disabled = false;
+            doubleButton.disabled = false;
+            betButton.disabled = true;
+            betInput.disabled = true;
+            messageEl.textContent = '';
+        }
+
+        // Event listeners
+        hitButton.addEventListener('click', playerHit);
+        standButton.addEventListener('click', playerStand);
+        doubleButton.addEventListener('click', playerDouble);
+        betButton.addEventListener('click', placeBet);
+
+        // Initialize
+        hitButton.disabled = true;
+        standButton.disabled = true;
+        doubleButton.disabled = true;
+        splitButton.disabled = true;
+    </script>
+</body>
+</html>

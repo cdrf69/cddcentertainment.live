@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Jack - CDDC</title>
     <style>
+        /* Original styles */
         body {
             font-family: 'Courier New', monospace;
             line-height: 1.6;
@@ -12,41 +13,17 @@
             padding: 0;
             background-color: #2F2D37;
             color: #808EFF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
         .container {
             width: 80%;
-            max-width: 1000px;
-            background-color: #1E1C24;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(128, 142, 255, 0.2);
+            margin: auto;
+            overflow: hidden;
         }
-        h1, h2 {
+        h1 {
             color: #E380F0;
-            text-align: center;
         }
-        button {
-            background-color: #E380F0;
-            color: #2F2D37;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background-color: #C060D0;
-        }
-        button:disabled {
-            background-color: #6B5B6F;
-            cursor: not-allowed;
-        }
+
+        /* Additional styles for the game */
         #game-area {
             margin-top: 20px;
         }
@@ -89,6 +66,24 @@
             right: 5px;
             transform: rotate(180deg);
         }
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #C060D0;
+        }
+        button:disabled {
+            background-color: #6B5B6F;
+            cursor: not-allowed;
+        }
         #actions, #bet-area {
             display: flex;
             justify-content: center;
@@ -128,11 +123,36 @@
         .deal-animation {
             animation: dealCard 0.5s ease-out;
         }
+        #chip-stack {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        .chip {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px dashed #FFF;
+            margin: 0 -10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #FFF;
+        }
+        .chip-100 { background-color: #FF5733; }
+        .chip-50 { background-color: #33FF57; }
+        .chip-25 { background-color: #3357FF; }
+        .chip-10 { background-color: #FF33F5; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Black Jack</h1>
+        <p>Welcome to Black Jack! Play Smart, Win Big!</p>
         <div id="tokens-display">Tokens: <span id="tokens">1000</span></div>
         <div id="game-area">
             <h2>Dealer's Hand</h2>
@@ -147,13 +167,14 @@
                 <button id="double">Double</button>
                 <button id="split" style="display:none;">Split</button>
             </div>
+            <div id="chip-stack"></div>
             <div id="bet-area">
                 <input type="number" id="bet-amount" min="10" max="1000" step="10" value="10">
                 <button id="place-bet">Place Bet</button>
             </div>
             <p id="message"></p>
         </div>
-        <a href="individuals.html" style="display: block; text-align: center; margin-top: 20px; color: #E380F0;">Back to Games</a>
+        <a href="individuals.html">Back to Games</a>
     </div>
 
     <script>
@@ -262,6 +283,26 @@
             dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
             playerScoreEl.textContent = playerScore;
             tokensEl.textContent = tokens;
+            updateChipStack();
+        }
+
+        // Update chip stack
+        function updateChipStack() {
+            const chipStackEl = document.getElementById('chip-stack');
+            chipStackEl.innerHTML = '';
+            let remainingBet = currentBet;
+            const chipValues = [100, 50, 25, 10];
+            
+            chipValues.forEach(value => {
+                const chipCount = Math.floor(remainingBet / value);
+                for (let i = 0; i < chipCount; i++) {
+                    const chipEl = document.createElement('div');
+                    chipEl.className = `chip chip-${value}`;
+                    chipEl.textContent = value;
+                    chipStackEl.appendChild(chipEl);
+                }
+                remainingBet %= value;
+            });
         }
 
         // Start new game
@@ -368,6 +409,7 @@
             betButton.disabled = true;
             betInput.disabled = true;
             messageEl.textContent = '';
+            updateChipStack();
         }
 
         // Event listeners
@@ -381,6 +423,7 @@
         standButton.disabled = true;
         doubleButton.disabled = true;
         splitButton.disabled = true;
+        updateChipStack();
     </script>
 </body>
 </html>

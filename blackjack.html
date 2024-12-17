@@ -5,17 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Jack - CDDC</title>
     <style>
-        /* Existing styles remain unchanged */
-        /* ... */
-        
-        /* Add styles for split hands */
-        .split-hands {
+        body {
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #2F2D37;
+            color: #808EFF;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            color: #E380F0;
+        }
+        #game-area {
+            margin-top: 20px;
+        }
+        .hand {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            min-height: 150px;
+            margin-bottom: 20px;
         }
-        .split-hand {
+        .card {
+            width: 100px;
+            height: 140px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            margin: 0 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #000000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .card.red {
+            color: #FF0000;
+        }
+        .card::before, .card::after {
+            content: attr(data-value);
+            position: absolute;
+            font-size: 16px;
+        }
+        .card::before {
+            top: 5px;
+            left: 5px;
+        }
+        .card::after {
+            bottom: 5px;
+            right: 5px;
+            transform: rotate(180deg);
+        }
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #C060D0;
+        }
+        button:disabled {
+            background-color: #6B5B6F;
+            cursor: not-allowed;
+        }
+        #actions, #bet-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #bet-amount {
+            width: 100px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        #message {
             text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            min-height: 27px;
         }
+        .score {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #tokens-display {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        @keyframes dealCard {
+            from {
+                transform: translateY(-200px) rotate(720deg);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        .deal-animation {
+            animation: dealCard 0.5s ease-out;
+        }
+        #chip-stack {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        .chip {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px dashed #FFF;
+            margin: 0 -10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #FFF;
+        }
+        .chip-100 { background-color: #FF5733; }
+        .chip-50 { background-color: #33FF57; }
+        .chip-25 { background-color: #3357FF; }
+        .chip-10 { background-color: #FF33F5; }
     </style>
 </head>
 <body>
@@ -28,25 +155,16 @@
             <div class="score">Score: <span id="dealer-score"></span></div>
             <div id="dealer-hand" class="hand"></div>
             <h2>Your Hand</h2>
-            <div id="player-hands" class="split-hands">
-                <div class="split-hand">
-                    <div class="score">Score: <span id="player-score-1"></span></div>
-                    <div id="player-hand-1" class="hand"></div>
-                </div>
-                <div class="split-hand" style="display: none;">
-                    <div class="score">Score: <span id="player-score-2"></span></div>
-                    <div id="player-hand-2" class="hand"></div>
-                </div>
-            </div>
+            <div class="score">Score: <span id="player-score"></span></div>
+            <div id="player-hand" class="hand"></div>
             <div id="actions">
                 <button id="hit">Hit</button>
                 <button id="stand">Stand</button>
                 <button id="double">Double</button>
-                <button id="split">Split</button>
             </div>
             <div id="chip-stack"></div>
             <div id="bet-area">
-                <input type="number" id="bet-amount" min="10" step="10" value="10">
+                <input type="number" id="bet-amount" min="10" max="1000" step="10" value="10">
                 <button id="place-bet">Place Bet</button>
             </div>
             <p id="message"></p>
@@ -56,82 +174,144 @@
     <script>
         // Game state
         let deck = [];
-        let playerHands = [[], []];
+        let playerHand = [];
         let dealerHand = [];
-        let playerScores = [0, 0];
+        let playerScore = 0;
         let dealerScore = 0;
         let tokens = 1000;
         let currentBet = 0;
         let gameInProgress = false;
-        let currentHand = 0;
-        let splitActive = false;
 
         // DOM elements
         const dealerHandEl = document.getElementById('dealer-hand');
-        const playerHandEls = [document.getElementById('player-hand-1'), document.getElementById('player-hand-2')];
+        const playerHandEl = document.getElementById('player-hand');
         const dealerScoreEl = document.getElementById('dealer-score');
-        const playerScoreEls = [document.getElementById('player-score-1'), document.getElementById('player-score-2')];
+        const playerScoreEl = document.getElementById('player-score');
         const hitButton = document.getElementById('hit');
         const standButton = document.getElementById('stand');
         const doubleButton = document.getElementById('double');
-        const splitButton = document.getElementById('split');
         const betButton = document.getElementById('place-bet');
         const betInput = document.getElementById('bet-amount');
         const tokensEl = document.getElementById('tokens');
         const messageEl = document.getElementById('message');
 
-        // Existing functions remain largely unchanged
-        // createDeck(), shuffleDeck(), dealCard(), calculateScore(), createCardElement()
+        // Create deck
+        function createDeck() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+            deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+        }
+
+        // Shuffle deck
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        // Deal a card
+        function dealCard() {
+            return deck.pop();
+        }
+
+        // Calculate hand score
+        function calculateScore(hand) {
+            let score = 0;
+            let aces = 0;
+            for (let card of hand) {
+                if (card.value === 'A') {
+                    aces += 1;
+                    score += 11;
+                } else if (['K', 'Q', 'J'].includes(card.value)) {
+                    score += 10;
+                } else {
+                    score += parseInt(card.value);
+                }
+            }
+            while (score > 21 && aces > 0) {
+                score -= 10;
+                aces -= 1;
+            }
+            return score;
+        }
+
+        // Create card element
+        function createCardElement(card, faceUp = true) {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'card deal-animation';
+            if (faceUp) {
+                cardEl.textContent = card.suit;
+                cardEl.dataset.value = card.value;
+                if (card.suit === '♥' || card.suit === '♦') {
+                    cardEl.classList.add('red');
+                }
+            } else {
+                cardEl.textContent = '?';
+                cardEl.style.backgroundColor = '#808EFF';
+            }
+            return cardEl;
+        }
 
         // Update UI
         function updateUI() {
             dealerHandEl.innerHTML = '';
-            playerHandEls[0].innerHTML = '';
-            playerHandEls[1].innerHTML = '';
-
+            playerHandEl.innerHTML = '';
             dealerHand.forEach((card, index) => {
                 const cardEl = createCardElement(card, index === 0 || !gameInProgress);
                 dealerHandEl.appendChild(cardEl);
             });
-
-            playerHands.forEach((hand, index) => {
-                hand.forEach(card => {
-                    const cardEl = createCardElement(card);
-                    playerHandEls[index].appendChild(cardEl);
-                });
+            playerHand.forEach(card => {
+                const cardEl = createCardElement(card);
+                playerHandEl.appendChild(cardEl);
             });
-
             dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
-            playerScoreEls[0].textContent = playerScores[0];
-            playerScoreEls[1].textContent = playerScores[1];
+            playerScoreEl.textContent = playerScore;
             tokensEl.textContent = tokens;
             updateChipStack();
+        }
 
-            // Show/hide split hand
-            document.querySelector('.split-hand:nth-child(2)').style.display = splitActive ? 'block' : 'none';
+        // Update chip stack
+        function updateChipStack() {
+            const chipStackEl = document.getElementById('chip-stack');
+            chipStackEl.innerHTML = '';
+            let remainingBet = currentBet;
+            const chipValues = [100, 50, 25, 10];
+            chipValues.forEach(value => {
+                const chipCount = Math.floor(remainingBet / value);
+                for (let i = 0; i < chipCount; i++) {
+                    const chipEl = document.createElement('div');
+                    chipEl.className = `chip chip-${value}`;
+                    chipEl.textContent = value;
+                    chipStackEl.appendChild(chipEl);
+                }
+                remainingBet %= value;
+            });
         }
 
         // Start new game
         function startNewGame() {
             createDeck();
             shuffleDeck();
-            playerHands = [[dealCard(), dealCard()], []];
+            playerHand = [dealCard(), dealCard()];
             dealerHand = [dealCard(), dealCard()];
-            playerScores = [calculateScore(playerHands[0]), 0];
+            playerScore = calculateScore(playerHand);
             dealerScore = calculateScore(dealerHand);
             gameInProgress = true;
-            currentHand = 0;
-            splitActive = false;
             updateUI();
             checkForBlackjack();
-            updateSplitButton();
         }
 
         // Check for blackjack
         function checkForBlackjack() {
-            if (playerScores[0] === 21) {
+            if (playerScore === 21) {
                 endGame('Blackjack! You win!');
-                tokens += Math.floor(currentBet * 2.5);
+                tokens += Math.floor(currentBet * 1.5);
             } else if (dealerScore === 21) {
                 endGame('Dealer has Blackjack. You lose.');
                 tokens -= currentBet;
@@ -140,87 +320,49 @@
 
         // Player hit
         function playerHit() {
-            playerHands[currentHand].push(dealCard());
-            playerScores[currentHand] = calculateScore(playerHands[currentHand]);
+            playerHand.push(dealCard());
+            playerScore = calculateScore(playerHand);
             updateUI();
-            if (playerScores[currentHand] > 21) {
-                if (splitActive && currentHand === 0) {
-                    currentHand = 1;
-                    updateUI();
-                } else {
-                    endGame('Bust! You lose.');
-                    tokens -= currentBet * (splitActive ? 2 : 1);
-                }
+            if (playerScore > 21) {
+                endGame('Bust! You lose.');
+                tokens -= currentBet;
             }
         }
 
         // Player stand
         function playerStand() {
-            if (splitActive && currentHand === 0) {
-                currentHand = 1;
-                updateUI();
+            gameInProgress = false;
+            while (dealerScore < 17) {
+                dealerHand.push(dealCard());
+                dealerScore = calculateScore(dealerHand);
+            }
+            updateUI();
+            if (dealerScore > 21) {
+                endGame('Dealer busts! You win!');
+                tokens += currentBet;
+            } else if (dealerScore > playerScore) {
+                endGame('Dealer wins.');
+                tokens -= currentBet;
+            } else if (dealerScore < playerScore) {
+                endGame('You win!');
+                tokens += currentBet;
             } else {
-                gameInProgress = false;
-                while (dealerScore < 17) {
-                    dealerHand.push(dealCard());
-                    dealerScore = calculateScore(dealerHand);
-                }
-                updateUI();
-                determineWinner();
+                endGame('It\'s a tie.');
             }
         }
 
         // Player double
         function playerDouble() {
-            if (tokens >= currentBet * 2) {
+            if (tokens >= currentBet) {
                 tokens -= currentBet;
                 currentBet *= 2;
                 playerHit();
-                if (playerScores[currentHand] <= 21) {
+                if (playerScore <= 21) {
                     playerStand();
                 }
             } else {
                 messageEl.textContent = 'Not enough tokens to double.';
             }
-        }
-
-        // Player split
-        function playerSplit() {
-            if (playerHands[0][0].value === playerHands[0][1].value && tokens >= currentBet * 2) {
-                splitActive = true;
-                playerHands[1].push(playerHands[0].pop());
-                playerHands[0].push(dealCard());
-                playerHands[1].push(dealCard());
-                playerScores = [calculateScore(playerHands[0]), calculateScore(playerHands[1])];
-                tokens -= currentBet;
-                updateUI();
-                updateSplitButton();
-            } else {
-                messageEl.textContent = 'Cannot split these cards or not enough tokens.';
-            }
-        }
-
-        // Determine winner
-        function determineWinner() {
-            let message = '';
-            let totalWin = 0;
-
-            for (let i = 0; i <= (splitActive ? 1 : 0); i++) {
-                if (playerScores[i] > 21) {
-                    message += `Hand ${i + 1}: Bust. `;
-                } else if (dealerScore > 21 || playerScores[i] > dealerScore) {
-                    message += `Hand ${i + 1}: You win! `;
-                    totalWin += currentBet;
-                } else if (dealerScore > playerScores[i]) {
-                    message += `Hand ${i + 1}: Dealer wins. `;
-                    totalWin -= currentBet;
-                } else {
-                    message += `Hand ${i + 1}: It's a tie. `;
-                }
-            }
-
-            tokens += totalWin;
-            endGame(message.trim());
         }
 
         // End game
@@ -230,7 +372,6 @@
             hitButton.disabled = true;
             standButton.disabled = true;
             doubleButton.disabled = true;
-            splitButton.disabled = true;
             betButton.disabled = false;
             betInput.disabled = false;
             updateUI();
@@ -259,33 +400,17 @@
             updateChipStack();
         }
 
-        // Update split button
-        function updateSplitButton() {
-            splitButton.disabled = !(playerHands[0].length === 2 && playerHands[0][0].value === playerHands[0][1].value && tokens >= currentBet);
-        }
-
         // Event listeners
         hitButton.addEventListener('click', playerHit);
         standButton.addEventListener('click', playerStand);
         doubleButton.addEventListener('click', playerDouble);
-        splitButton.addEventListener('click', playerSplit);
         betButton.addEventListener('click', placeBet);
 
         // Initialize
         hitButton.disabled = true;
         standButton.disabled = true;
         doubleButton.disabled = true;
-        splitButton.disabled = true;
         updateChipStack();
-
-        // Set maximum bet to current token amount
-        function updateMaxBet() {
-            betInput.max = tokens;
-        }
-
-        // Update max bet when tokens change
-        const tokenObserver = new MutationObserver(updateMaxBet);
-        tokenObserver.observe(tokensEl, { childList: true });
     </script>
 </body>
 </html>

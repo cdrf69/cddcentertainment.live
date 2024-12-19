@@ -176,22 +176,116 @@
    </div>
 
    <script>
+       let deck = [];
+       let playerHand = [];
+       let dealerHand = [];
+       let playerScore = 0;
+       let dealerScore = 0;
        let tokens = 1000;
        let currentBet = 0;
        let gameInProgress = false;
 
-       const betButton = document.getElementById('place-bet');
-       const betInput = document.getElementById('bet-amount');
+       const dealerHandEl = document.getElementById('dealer-hand');
+       const playerHandEl = document.getElementById('player-hand');
+       const dealerScoreEl = document.getElementById('dealer-score');
+       const playerScoreEl = document.getElementById('player-score');
        const messageEl = document.getElementById('message');
        const tokensEl = document.getElementById('tokens');
        const hitButton = document.getElementById('hit');
        const standButton = document.getElementById('stand');
-       const doubleButton = document.getElementById('double');
-       const splitButton = document.getElementById('split');
+       const betButton = document.getElementById('place-bet');
+       const betInput = document.getElementById('bet-amount');
+
+       function createDeck() {
+           const suits = ['♠', '♥', '♦', '♣'];
+           const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+           deck = [];
+           for (let suit of suits) {
+               for (let value of values) {
+                   deck.push({ suit, value });
+               }
+           }
+           shuffleDeck();
+       }
+
+       function shuffleDeck() {
+           for (let i = deck.length - 1; i > 0; i--) {
+               const j = Math.floor(Math.random() * (i + 1));
+               [deck[i], deck[j]] = [deck[j], deck[i]];
+           }
+       }
+
+       function dealCard() {
+           return deck.pop();
+       }
+
+       function calculateScore(hand) {
+           let score = 0;
+           let aces = 0;
+           for (let card of hand) {
+               if (card.value === 'A') {
+                   aces += 1;
+                   score += 11;
+               } else if (['K', 'Q', 'J'].includes(card.value)) {
+                   score += 10;
+               } else {
+                   score += parseInt(card.value);
+               }
+           }
+           while (score > 21 && aces > 0) {
+               score -= 10;
+               aces -= 1;
+           }
+           return score;
+       }
+
+       function createCardElement(card, faceUp = true) {
+           const cardEl = document.createElement('div');
+           cardEl.className = 'card';
+           if (faceUp) {
+               cardEl.textContent = card.suit;
+               cardEl.dataset.value = card.value;
+               if (card.suit === '♥' || card.suit === '♦') {
+                   cardEl.classList.add('red');
+               }
+           } else {
+               cardEl.textContent = '?';
+               cardEl.style.backgroundColor = '#808EFF';
+           }
+           return cardEl;
+       }
+
+       function updateUI() {
+           dealerHandEl.innerHTML = '';
+           playerHandEl.innerHTML = '';
+
+           dealerHand.forEach((card, index) => {
+               const cardEl = createCardElement(card, index !== 0 || !gameInProgress);
+               dealerHandEl.appendChild(cardEl);
+           });
+
+           playerHand.forEach((card) => {
+               const cardEl = createCardElement(card);
+               playerHandEl.appendChild(cardEl);
+           });
+
+           dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
+           playerScoreEl.textContent = playerScore;
+           tokensEl.textContent = tokens;
+       }
+
+       function startGame() {
+           createDeck();
+           playerHand = [dealCard(), dealCard()];
+           dealerHand = [dealCard(), dealCard()];
+           playerScore = calculateScore(playerHand);
+           dealerScore = calculateScore(dealerHand);
+           gameInProgress = true;
+           updateUI();
+       }
 
        function placeBet() {
            const betAmount = parseInt(betInput.value, 10);
-
            if (betAmount > tokens) {
                messageEl.textContent = 'Not enough tokens to place this bet.';
                return;
@@ -207,13 +301,11 @@
            tokensEl.textContent = tokens;
            messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
 
-           gameInProgress = true;
            hitButton.disabled = false;
            standButton.disabled = false;
-           doubleButton.disabled = false;
-           splitButton.disabled = false;
            betButton.disabled = true;
            betInput.disabled = true;
+           startGame();
        }
 
        betButton.addEventListener('click', placeBet);

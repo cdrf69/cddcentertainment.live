@@ -384,6 +384,90 @@
        betButton.addEventListener('click', placeBet);
        hitButton.addEventListener('click', playerHit);
        standButton.addEventListener('click', playerStand);
+       let tokens = 1000; // Default starting tokens
+let wins = 0; // Track wins
+let losses = 0; // Track losses
+
+// Load saved progress
+function loadProgress() {
+    const savedTokens = localStorage.getItem('tokens');
+    const savedWins = localStorage.getItem('wins');
+    const savedLosses = localStorage.getItem('losses');
+
+    if (savedTokens !== null) tokens = parseInt(savedTokens, 10);
+    if (savedWins !== null) wins = parseInt(savedWins, 10);
+    if (savedLosses !== null) losses = parseInt(savedLosses, 10);
+
+    updateUI();
+    updateStats();
+}
+
+// Save current progress
+function saveProgress() {
+    localStorage.setItem('tokens', tokens);
+    localStorage.setItem('wins', wins);
+    localStorage.setItem('losses', losses);
+    console.log('Progress saved!'); // Optional feedback
+}
+
+// Reset progress
+function resetProgress() {
+    localStorage.removeItem('tokens');
+    localStorage.removeItem('wins');
+    localStorage.removeItem('losses');
+    tokens = 1000;
+    wins = 0;
+    losses = 0;
+    updateUI();
+    updateStats();
+    console.log('Progress reset!'); // Optional feedback
+}
+
+// Update stats display
+function updateStats() {
+    const statsEl = document.getElementById('stats');
+    statsEl.textContent = `Wins: ${wins}, Losses: ${losses}`;
+}
+
+// Modify the endGame function to include win/loss tracking
+function endGame(message) {
+    gameInProgress = false;
+    messageEl.textContent = message;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    doubleButton.disabled = true;
+    betButton.disabled = false;
+    betInput.disabled = false;
+
+    // Track wins and losses
+    if (message.includes('win')) {
+        wins++;
+    } else if (message.includes('lose')) {
+        losses++;
+    }
+
+    saveProgress(); // Save progress at the end of each game
+    updateUI();
+    updateStats();
+}
+
+// Call loadProgress when the page loads
+window.addEventListener('load', loadProgress);
+
+// Add Reset Progress button
+const resetButton = document.createElement('button');
+resetButton.textContent = 'Reset Progress';
+resetButton.addEventListener('click', resetProgress);
+document.body.appendChild(resetButton);
+
+// Add Stats Display
+const statsDisplay = document.createElement('div');
+statsDisplay.id = 'stats';
+statsDisplay.style.textAlign = 'center';
+statsDisplay.style.marginTop = '20px';
+statsDisplay.style.fontSize = '18px';
+document.body.appendChild(statsDisplay);
+updateStats();
    </script>
 </body>
 </html>

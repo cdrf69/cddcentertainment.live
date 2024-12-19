@@ -381,4 +381,18 @@
            tokensEl.textContent = tokens;
            messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
 
-          
+           hitButton.disabled = false;
+           standButton.disabled = false;
+           doubleButton.disabled = false;
+           betButton.disabled = true;
+           betInput.disabled = true;
+           startGame();
+       }
+
+       betButton.addEventListener('click', placeBet);
+       hitButton.addEventListener('click', playerHit);
+       standButton.addEventListener('click', playerStand);
+       doubleButton.addEventListener('click', doubleBet);
+   </script>
+</body>
+</html>

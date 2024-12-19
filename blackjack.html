@@ -159,10 +159,10 @@
            <div class="score">Score:<span id="player-score"></span></div>
            <div id="player-hand" class="hand"></div>
            <div id="actions">
-               <button id="hit">Hit</button>
-               <button id="stand">Stand</button>
-               <button id="double">Double</button>
-               <button id="split">Split</button>
+               <button id="hit" disabled>Hit</button>
+               <button id="stand" disabled>Stand</button>
+               <button id="double" disabled>Double</button>
+               <button id="split" disabled>Split</button>
            </div>
            <div id="chip-stack"></div>
            <div id="bet-area">
@@ -176,287 +176,47 @@
    </div>
 
    <script>
-       // Game state
-       let deck = [];
-       let playerHand = [];
-       let dealerHand = [];
-       let playerScore = 0;  
-       let dealerScore = 0;  
-       let tokens = 1000;  
-       let currentBet = 0;  
-       let gameInProgress = false;  
-       let splitHands = [];  
-       let currentHand = 0;
+       let tokens = 1000;
+       let currentBet = 0;
+       let gameInProgress = false;
 
-       // DOM elements
-       const dealerHandEl = document.getElementById('dealer-hand');
-       const playerHandEl = document.getElementById('player-hand');
-       const dealerScoreEl = document.getElementById('dealer-score');
-       const playerScoreEl = document.getElementById('player-score');
+       const betButton = document.getElementById('place-bet');
+       const betInput = document.getElementById('bet-amount');
+       const messageEl = document.getElementById('message');
+       const tokensEl = document.getElementById('tokens');
        const hitButton = document.getElementById('hit');
        const standButton = document.getElementById('stand');
        const doubleButton = document.getElementById('double');
        const splitButton = document.getElementById('split');
-       const betButton = document.getElementById('place-bet');
-       const betInput = document.getElementById('bet-amount');
-       const tokensEl = document.getElementById('tokens');
-       const messageEl = document.getElementById('message');
 
-       // Create deck
-       function createDeck() {
-           const suits = ['♠', '♥', '♦', '♣'];
-           const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-           deck = [];
-           for (let suit of suits) {  
-               for (let value of values) {  
-                   deck.push({ suit, value });  
-               }  
-           }  
+       function placeBet() {
+           const betAmount = parseInt(betInput.value, 10);
+
+           if (betAmount > tokens) {
+               messageEl.textContent = 'Not enough tokens to place this bet.';
+               return;
+           }
+
+           if (betAmount < 10 || betAmount > 1000) {
+               messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
+               return;
+           }
+
+           currentBet = betAmount;
+           tokens -= betAmount;
+           tokensEl.textContent = tokens;
+           messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
+
+           gameInProgress = true;
+           hitButton.disabled = false;
+           standButton.disabled = false;
+           doubleButton.disabled = false;
+           splitButton.disabled = false;
+           betButton.disabled = true;
+           betInput.disabled = true;
        }
 
-      // Shuffle deck
-      function shuffleDeck() {  
-          for (let i = deck.length -1 ; i >0 ; i--) {  
-              const j = Math.floor(Math.random() * (i +1));  
-              [deck[i], deck[j]] =[deck[j], deck[i]];  
-          }  
-      }
-
-      // Deal a card
-      function dealCard() {  
-          return deck.pop();  
-      }
-
-      // Calculate hand score
-      function calculateScore(hand) {  
-          let score =0 ;  
-          let aces=0 ;  
-          for (let card of hand) {  
-              if (card.value ==='A') {  
-                  aces +=1 ;  
-                  score +=11 ;  
-              } else if (['K','Q','J'].includes(card.value)) {  
-                  score +=10 ;  
-              } else {  
-                  score +=parseInt(card.value);  
-              }  
-          }  
-          while (score >21 && aces >0 ) {  
-              score -=10 ;  
-              aces -=1 ;  
-          }  
-          return score;  
-      }
-
-      // Create card element
-      function createCardElement(card, faceUp=true ) {  
-          const cardEl=document.createElement('div');   
-          cardEl.className='card deal-animation';   
-          if (faceUp) {   
-              cardEl.textContent=card.suit;   
-              cardEl.dataset.value=card.value;   
-              if (card.suit ==='♥' || card.suit ==='♦') {   
-                  cardEl.classList.add('red');   
-              }   
-          } else {   
-              cardEl.textContent='?';   
-              cardEl.style.backgroundColor='#808EFF';   
-          }   
-          return cardEl;   
-      }
-
-      // Update UI
-      function updateUI() {    
-          dealerHandEl.innerHTML='';    
-          playerHandEl.innerHTML='';    
-          dealerHand.forEach((card,index)=>{    
-              const cardEl=createCardElement(card,index===0 || !gameInProgress);    
-              dealerHandEl.appendChild(cardEl);    
-          });    
-          if (splitHands.length >0) {    
-              splitHands.forEach((hand,index)=>{    
-                  const handDiv=document.createElement('div');    
-                  handDiv.className='hand';    
-                  hand.forEach(card=>{    
-                      const cardEl=createCardElement(card);    
-                      handDiv.appendChild(cardEl);    
-                  });    
-                  if (index===currentHand) {    
-                      handDiv.style.border='2px solid #E380F0';    
-                  }    
-                  playerHandEl.appendChild(handDiv);    
-              });    
-              playerScoreEl.textContent=calculateScore(splitHands[currentHand]);    
-          } else {    
-              playerHand.forEach(card=>{    
-                  const cardEl=createCardElement(card);    
-                  playerHandEl.appendChild(cardEl);    
-              });    
-              playerScoreEl.textContent=playerScore;    
-          }    
-          dealerScoreEl.textContent=gameInProgress ?'?' :dealerScore;    
-          tokensEl.textContent=tokens;    
-          updateChipStack();    
-          checkForSplit();     
-      }
-
-      // Update chip stack
-      function updateChipStack() {     
-          const chipStackEl=document.getElementById('chip-stack');     
-          chipStackEl.innerHTML='';     
-          let remainingBet=currentBet;     
-          const chipValues=[100,50,25,10];     
-          chipValues.forEach(value=>{     
-              const chipCount=Math.floor(remainingBet/value);     
-              for (let i=0;i<chipCount;i++) {     
-                  const chipEl=document.createElement('div');     
-                  chipEl.className=`chip chip-${value}`;     
-                  chipEl.textContent=value;     
-                  chipStackEl.appendChild(chipEl);     
-              }     
-              remainingBet %=value;     
-          });     
-      }
-
-      // Start new game
-      function startNewGame() {      
-          createDeck();      
-          shuffleDeck();      
-          playerHand=[dealCard(),dealCard()];      
-          dealerHand=[dealCard(),dealCard()];      
-          playerScore=calculateScore(playerHand);      
-          dealerScore=calculateScore(dealerHand);      
-          gameInProgress=true;      
-          splitHands=[];      
-          currentHand=0;      
-          updateUI();      
-          checkForBlackjack();      
-      }
-
-      // Check for blackjack
-      function checkForBlackjack() {       
-          if (playerScore===21) {       
-              endGame('Blackjack! You win!');       
-              tokens+=Math.floor(currentBet *1.5);       
-         } else if (dealerScore===21) {       
-             endGame('Dealer has Blackjack. You lose.');       
-             tokens-=currentBet;       
-         }       
-     }
-
-     // Player hit
-     function playerHit() {       
-         if (splitHands.length >0) {       
-             splitHands[currentHand].push(dealCard());       
-             playerScore=calculateScore(splitHands[currentHand]);       
-         } else {       
-             playerHand.push(dealCard());       
-             playerScore=calculateScore(playerHand);       
-         }       
-         updateUI();       
-         if (playerScore >21) {       
-             if (splitHands.length >0 && currentHand<splitHands.length -1) {       
-                 currentHand++;       
-                 playerScore=calculateScore(splitHands[currentHand]);       
-                 updateUI();       
-             } else {       
-                 endGame(splitHands.length >0 ?'Bust on all hands! You lose.' :'Bust! You lose.');       
-                 tokens-=currentBet *(splitHands.length >0 ?splitHands.length :1);       
-             }       
-         }       
-     }
-
-     // Player stand
-     function playerStand() {        
-         if (splitHands.length >0 && currentHand<splitHands.length -1) {        
-             currentHand++;        
-             playerScore=calculateScore(splitHands[currentHand]);        
-             updateUI();        
-         } else {        
-             gameInProgress=false;        
-             while (dealerScore<17) {        
-                 dealerHand.push(dealCard());        
-                 dealerScore=calculateScore(dealerHand);        
-             }        
-             updateUI();        
-             determineWinner();        
-         }        
-     }
-
-     // Player double
-     function playerDouble() {
-         if (tokens >= currentBet) {
-             tokens -= currentBet ;
-             currentBet *=2 ;
-             playerHit();
-             
-             if(playerScore <=21){
-                 playerStand();
-                }
-             
-         }else{
-                messageEl.textContent='Not enough tokens to double.';
-                }
-     }
-
-     // Player split
-     function playerSplit() {
-         if(playerHand.length !==2 || playerHand[0].value !==playerHand[1].value || tokens<currentBet){
-                return ;
-                }
-
-                tokens -=currentBet ;
-                splitHands=[[playerHand[0], dealCard()], [playerHand[1], dealCard()]];
-                playerHand=splitHands[0];
-                currentHand=0 ;
-                playerScore=calculateScore(playerHand);
-                updateUI();
-     }
-
-     // Check for split
-     function checkForSplit(){
-         splitButton.disabled=!(playerHand.length ===2 && playerHand[0].value ===playerHand[1].value && tokens>=currentBet && splitHands.length===0);
-     }
-
-     // Determine winner
-     function determineWinner(){
-         let message='';
-         let handsToCheck=splitHands.length >0 ?splitHands:[playerHand];
-
-         handsToCheck.forEach((hand,index)=>{
-                 let handScore=calculateScore(hand);
-                 if(dealerScore>21){
-                     message+=` Hand ${index +1}: You win! `;
-                     tokens +=currentBet ;
-                 }else if(handScore>dealerScore){
-                     message+=` Hand ${index +1}: You win! `;
-                     tokens +=currentBet ;
-                 }else if(handScore<dealerScore){
-                     message+=` Hand ${index +1}: Dealer wins. `;
-                     tokens -=currentBet ;
-                 }else{
-                     message+=` Hand ${index +1}: It's a tie. `;
-                 }
-                 
-                 endGame(message.trim());
-                 
-                 
-                 });     
-
-    // End game
-    function endGame(message) {
-        gameInProgress = false ;
-        messageEl.textContent = message ;
-        
-        hitButton.disabled=true ;
-        
-        standButton.disabled=true ;
-        
-        doubleButton.disabled=true ;
-        
-        splitButton.disabled=true ;
-    }
-
-    // Place bet
-    function placeBet() {
-        console.log('placeBet function called');
+       betButton.addEventListener('click', placeBet);
+   </script>
+</body>
+</html>

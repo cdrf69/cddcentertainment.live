@@ -358,30 +358,29 @@
            }
        }
 
-       function placeBet() {
-           const betAmount = parseInt(betInput.value, 10);
-           if (betAmount > tokens) {
-               messageEl.textContent = 'Not enough tokens to place this bet.';
-               return;
-           }
-           if (betAmount < 10 || betAmount > 1000) {
-               messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
-               return;
-           }
-           currentBet = betAmount;
-           tokens -= betAmount;
-           tokensEl.textContent = tokens;
-           messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
-
-           hitButton.disabled = false;
-           standButton.disabled = false;
-           doubleButton.disabled = false;
-           betButton.disabled = true;
-           betInput.disabled = true;
-           startGame();
-       }
-
-       betButton.addEventListener('click', placeBet);
+function placeBet() {
+  const betAmount = parseInt(betInput.value, 10);
+  if (betAmount > tokens) {
+    messageEl.textContent = 'Not enough tokens to place this bet.';
+    return;
+  }
+  if (betAmount < 10 || betAmount > 1000) {
+    messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
+    return;
+  }
+  currentBet = betAmount;
+  tokens -= betAmount;
+  tokensEl.textContent = tokens;
+  messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
+  hitButton.disabled = false;
+  standButton.disabled = false;
+  doubleButton.disabled = false;
+  betButton.disabled = true;
+  betInput.disabled = true;
+  startGame();
+}
+       
+       document.getElementById('place-bet').addEventListener('click', placeBet);
        hitButton.addEventListener('click', playerHit);
        standButton.addEventListener('click', playerStand);
        let tokens = 1000; // Default starting tokens

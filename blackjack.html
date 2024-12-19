@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black Jack - Gambling Enhanced</title>
+    <title>Black Jack - CDDC</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -106,154 +106,284 @@
             font-size: 20px;
             margin-bottom: 20px;
         }
-        #account-area, #leaderboard-area, #stats-area, #purchase-area {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #808EFF;
-            border-radius: 10px;
-            background-color: #38354A;
-        }
-        .leaderboard-item, .stat-item {
-            margin: 5px 0;
-        }
-        .purchase-button {
-            margin: 10px;
-        }
+        @keyframes dealCard {
+            from {
+                transform: translateY(-200px) rotate(720deg);
+                opacity: 0; 
+             }
+             to {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1; 
+             }
+         }
+         .deal-animation {
+             animation: dealCard 0.5s ease-out; 
+         }
+         @keyframes chipMovement {
+             from {
+                 transform: translateY(0);
+             }
+             to {
+                 transform: translateY(-50px);
+             }
+         }
+         .chip-move {
+             animation: chipMovement 0.5s ease-in-out;
+         }
+         @keyframes addTokens {
+             from {
+                 transform: scale(1);
+             }
+             to {
+                 transform: scale(1.2);
+             }
+         }
+         .token-animation {
+             animation: addTokens 0.5s ease-in-out;
+         }
+         #chip-stack {
+             display:flex; 
+             justify-content:center; 
+             align-items:flex-end; 
+             height :100px; 
+             margin-bottom :20px; 
+         }
+         .chip { 
+             width :40px; 
+             height :40px; 
+             border-radius :50%; 
+             border :2px dashed #FFF; 
+             margin :0 -10px; 
+             display :flex; 
+             justify-content :center; 
+             align-items :center; 
+             font-size :12px; 
+             font-weight :bold; 
+             color :#FFF; 
+         }
+         .chip-100 { background-color :#FF5733; } 
+         .chip-50 { background-color :#33FF57; } 
+         .chip-25 { background-color :#3357FF; } 
+         .chip-10 { background-color :#FF33F5; } 
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Black Jack</h1>
         <p>Welcome to Black Jack! Play Smart, Win Big!</p>
-        <div id="account-area">
-            <h3>Account</h3>
-            <p id="username-display">Username: Guest</p>
-            <button id="login">Log In</button>
-            <button id="logout" disabled>Log Out</button>
-            <p id="daily-bonus">Claim your daily bonus: <button id="claim-bonus">Claim 500 Tokens</button></p>
-        </div>
-        <div id="tokens-display">Tokens: <span id="tokens">1000</span></div>
-        <div id="leaderboard-area">
-            <h3>Leaderboard</h3>
-            <div id="leaderboard">
-                <!-- Leaderboard entries -->
-            </div>
-        </div>
-        <div id="stats-area">
-            <h3>Statistics</h3>
-            <p class="stat-item">Total Wins: <span id="stat-wins">0</span></p>
-            <p class="stat-item">Total Losses: <span id="stat-losses">0</span></p>
-            <p class="stat-item">Total Bets: <span id="stat-bets">0</span></p>
-        </div>
-        <div id="purchase-area">
-            <h3>Purchase Tokens</h3>
-            <button class="purchase-button" data-tokens="100">Buy 100 Tokens</button>
-            <button class="purchase-button" data-tokens="500">Buy 500 Tokens</button>
-            <button class="purchase-button" data-tokens="1000">Buy 1000 Tokens</button>
-        </div>
+        <div id="tokens-display">Tokens:<span id="tokens">1000</span></div>
+        
         <div id="game-area">
-            <h2>Dealer's Hand</h2>
-            <div class="score">Score: <span id="dealer-score"></span></div>
-            <div id="dealer-hand" class="hand"></div>
-            <h2>Your Hand</h2>
-            <div class="score">Score: <span id="player-score"></span></div>
-            <div id="player-hand" class="hand"></div>
-            <div id="actions">
-                <button id="hit" disabled>Hit</button>
-                <button id="stand" disabled>Stand</button>
-                <button id="double" disabled>Double</button>
-                <button id="split" disabled>Split</button>
-            </div>
-            <div id="bet-area">
-                <input type="number" id="bet-amount" min="10" max="1000" step="10" value="10">
-                <button id="place-bet">Place Bet</button>
-            </div>
-            <p id="message"></p>
-        </div>
-        <a href="individuals.html">Back to Games</a>
-    </div>
-    <script>
-        // Preserve existing functionality
-        let tokens = 1000;
-        let totalWins = 0;
-        let totalLosses = 0;
-        let totalBets = 0;
-        let username = "Guest";
-        let hasClaimedBonus = false;
+           <h2>Dealer's Hand</h2>
+           <div class="score">Score:<span id="dealer-score"></span></div>
+           <div id="dealer-hand" class="hand"></div>
+           <h2>Your Hand</h2>
+           <div class="score">Score:<span id="player-score"></span></div>
+           <div id="player-hand" class="hand"></div>
+           <div id="actions">
+               <button id="hit" disabled>Hit</button>
+               <button id="stand" disabled>Stand</button>
+               <button id="double" disabled>Double</button>
+               <button id="split" disabled>Split</button>
+           </div>
+           <div id="chip-stack"></div>
+           <div id="bet-area">
+               <input type="number" id="bet-amount" min="10" max="1000" step="10" value="10">
+               <button id="place-bet">Place Bet</button>
+           </div>
+           <p id="message"></p>
+       </div>
 
-        const tokensEl = document.getElementById('tokens');
-        const loginButton = document.getElementById('login');
-        const logoutButton = document.getElementById('logout');
-        const claimBonusButton = document.getElementById('claim-bonus');
-        const leaderboardEl = document.getElementById('leaderboard');
-        const statWinsEl = document.getElementById('stat-wins');
-        const statLossesEl = document.getElementById('stat-losses');
-        const statBetsEl = document.getElementById('stat-bets');
+       <a href="individuals.html">Back to Games</a>
+   </div>
 
-        function updateTokensDisplay() {
-            tokensEl.textContent = tokens;
-        }
+   <script>
+       let deck = [];
+       let playerHand = [];
+       let dealerHand = [];
+       let playerScore = 0;
+       let dealerScore = 0;
+       let tokens = 1000;
+       let currentBet = 0;
+       let gameInProgress = false;
 
-        function updateStats() {
-            statWinsEl.textContent = totalWins;
-            statLossesEl.textContent = totalLosses;
-            statBetsEl.textContent = totalBets;
-        }
+       const dealerHandEl = document.getElementById('dealer-hand');
+       const playerHandEl = document.getElementById('player-hand');
+       const dealerScoreEl = document.getElementById('dealer-score');
+       const playerScoreEl = document.getElementById('player-score');
+       const messageEl = document.getElementById('message');
+       const tokensEl = document.getElementById('tokens');
+       const hitButton = document.getElementById('hit');
+       const standButton = document.getElementById('stand');
+       const doubleButton = document.getElementById('double');
+       const betButton = document.getElementById('place-bet');
+       const betInput = document.getElementById('bet-amount');
+       const chipStack = document.getElementById('chip-stack');
 
-        function claimDailyBonus() {
-            if (!hasClaimedBonus) {
-                tokens += 500;
-                hasClaimedBonus = true;
-                claimBonusButton.disabled = true;
-                alert("You claimed your daily bonus of 500 tokens!");
-                updateTokensDisplay();
-            } else {
-                alert("You have already claimed your daily bonus today.");
-            }
-        }
+       function createDeck() {
+           const suits = ['♠', '♥', '♦', '♣'];
+           const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+           deck = [];
+           for (let suit of suits) {
+               for (let value of values) {
+                   deck.push({ suit, value });
+               }
+           }
+           shuffleDeck();
+       }
 
-        function login() {
-            username = prompt("Enter your username:", "Guest");
-            if (username) {
-                document.getElementById('username-display').textContent = `Username: ${username}`;
-                loginButton.disabled = true;
-                logoutButton.disabled = false;
-            }
-        }
+       function shuffleDeck() {
+           for (let i = deck.length - 1; i > 0; i--) {
+               const j = Math.floor(Math.random() * (i + 1));
+               [deck[i], deck[j]] = [deck[j], deck[i]];
+           }
+       }
 
-        function logout() {
-            username = "Guest";
-            document.getElementById('username-display').textContent = `Username: ${username}`;
-            loginButton.disabled = false;
-            logoutButton.disabled = true;
-        }
+       function dealCard() {
+           return deck.pop();
+       }
 
-        function purchaseTokens(amount) {
-            tokens += amount;
-            updateTokensDisplay();
-            alert(`You purchased ${amount} tokens.`);
-        }
+       function calculateScore(hand) {
+           let score = 0;
+           let aces = 0;
+           for (let card of hand) {
+               if (card.value === 'A') {
+                   aces += 1;
+                   score += 11;
+               } else if (['K', 'Q', 'J'].includes(card.value)) {
+                   score += 10;
+               } else {
+                   score += parseInt(card.value);
+               }
+           }
+           while (score > 21 && aces > 0) {
+               score -= 10;
+               aces -= 1;
+           }
+           return score;
+       }
 
-        function addLeaderboardEntry(username, tokens) {
-            const entry = document.createElement('p');
-            entry.textContent = `${username}: ${tokens} tokens`;
-            leaderboardEl.appendChild(entry);
-        }
+       function createCardElement(card, faceUp = true) {
+           const cardEl = document.createElement('div');
+           cardEl.className = 'card deal-animation';
+           if (faceUp) {
+               cardEl.textContent = card.suit;
+               cardEl.dataset.value = card.value;
+               if (card.suit === '♥' || card.suit === '♦') {
+                   cardEl.classList.add('red');
+               }
+           } else {
+               cardEl.textContent = '?';
+               cardEl.style.backgroundColor = '#808EFF';
+           }
+           return cardEl;
+       }
 
-        claimBonusButton.addEventListener('click', claimDailyBonus);
-        loginButton.addEventListener('click', login);
-        logoutButton.addEventListener('click', logout);
+       function updateUI() {
+           dealerHandEl.innerHTML = '';
+           playerHandEl.innerHTML = '';
+           chipStack.innerHTML = '';
 
-        document.querySelectorAll('.purchase-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const amount = parseInt(button.dataset.tokens);
-                purchaseTokens(amount);
-            });
-        });
+           dealerHand.forEach((card, index) => {
+               const cardEl = createCardElement(card, index !== 0 || !gameInProgress);
+               dealerHandEl.appendChild(cardEl);
+           });
 
-        // Update UI initially
-        updateTokensDisplay();
-        updateStats();
-    </script>
+           playerHand.forEach((card) => {
+               const cardEl = createCardElement(card);
+               playerHandEl.appendChild(cardEl);
+           });
+
+           dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
+           playerScoreEl.textContent = playerScore;
+           tokensEl.textContent = tokens;
+       }
+
+       function startGame() {
+           createDeck();
+           playerHand = [dealCard(), dealCard()];
+           dealerHand = [dealCard(), dealCard()];
+           playerScore = calculateScore(playerHand);
+           dealerScore = calculateScore(dealerHand);
+           gameInProgress = true;
+           updateUI();
+       }
+
+       function checkGameStatus() {
+           if (playerScore === 21) {
+               endGame('Blackjack! You win!');
+               tokens += currentBet * 2;
+           } else if (playerScore > 21) {
+               endGame('Bust! You lose.');
+               tokens -= currentBet;
+           }
+       }
+
+       function endGame(message) {
+           gameInProgress = false;
+           messageEl.textContent = message;
+           hitButton.disabled = true;
+           standButton.disabled = true;
+           doubleButton.disabled = true;
+           betButton.disabled = false;
+           betInput.disabled = false;
+           updateUI();
+       }
+
+       function playerHit() {
+           if (!gameInProgress) return;
+           playerHand.push(dealCard());
+           playerScore = calculateScore(playerHand);
+           updateUI();
+           checkGameStatus();
+       }
+
+       function playerStand() {
+           if (!gameInProgress) return;
+           while (dealerScore < 17) {
+               dealerHand.push(dealCard());
+               dealerScore = calculateScore(dealerHand);
+           }
+           updateUI();
+
+           if (dealerScore > 21 || playerScore > dealerScore) {
+               endGame('You win!');
+               tokens += currentBet * 2;
+           } else if (dealerScore === playerScore) {
+               endGame("It's a tie!");
+               tokens += currentBet;
+           } else {
+               endGame('Dealer wins.');
+               tokens -= currentBet;
+           }
+       }
+
+       function placeBet() {
+           const betAmount = parseInt(betInput.value, 10);
+           if (betAmount > tokens) {
+               messageEl.textContent = 'Not enough tokens to place this bet.';
+               return;
+           }
+           if (betAmount < 10 || betAmount > 1000) {
+               messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
+               return;
+           }
+           currentBet = betAmount;
+           tokens -= betAmount;
+           tokensEl.textContent = tokens;
+           messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
+
+           hitButton.disabled = false;
+           standButton.disabled = false;
+           doubleButton.disabled = false;
+           betButton.disabled = true;
+           betInput.disabled = true;
+           startGame();
+       }
+
+       betButton.addEventListener('click', placeBet);
+       hitButton.addEventListener('click', playerHit);
+       standButton.addEventListener('click', playerStand);
+   </script>
 </body>
 </html>

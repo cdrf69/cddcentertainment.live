@@ -241,7 +241,7 @@
 
        function createCardElement(card, faceUp = true) {
            const cardEl = document.createElement('div');
-           cardEl.className = 'card';
+           cardEl.className = 'card deal-animation';
            if (faceUp) {
                cardEl.textContent = card.suit;
                cardEl.dataset.value = card.value;
@@ -284,6 +284,51 @@
            updateUI();
        }
 
+       function checkGameStatus() {
+           if (playerScore === 21) {
+               endGame('Blackjack! You win!');
+               tokens += currentBet * 2;
+           } else if (playerScore > 21) {
+               endGame('Bust! You lose.');
+           }
+       }
+
+       function endGame(message) {
+           gameInProgress = false;
+           messageEl.textContent = message;
+           hitButton.disabled = true;
+           standButton.disabled = true;
+           betButton.disabled = false;
+           betInput.disabled = false;
+       }
+
+       function playerHit() {
+           if (!gameInProgress) return;
+           playerHand.push(dealCard());
+           playerScore = calculateScore(playerHand);
+           updateUI();
+           checkGameStatus();
+       }
+
+       function playerStand() {
+           if (!gameInProgress) return;
+           while (dealerScore < 17) {
+               dealerHand.push(dealCard());
+               dealerScore = calculateScore(dealerHand);
+           }
+           updateUI();
+
+           if (dealerScore > 21 || playerScore > dealerScore) {
+               endGame('You win!');
+               tokens += currentBet * 2;
+           } else if (dealerScore === playerScore) {
+               endGame("It's a tie!");
+               tokens += currentBet;
+           } else {
+               endGame('Dealer wins.');
+           }
+       }
+
        function placeBet() {
            const betAmount = parseInt(betInput.value, 10);
            if (betAmount > tokens) {
@@ -309,6 +354,8 @@
        }
 
        betButton.addEventListener('click', placeBet);
+       hitButton.addEventListener('click', playerHit);
+       standButton.addEventListener('click', playerStand);
    </script>
 </body>
 </html>

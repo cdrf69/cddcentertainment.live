@@ -119,6 +119,17 @@
          .deal-animation {
              animation: dealCard 0.5s ease-out; 
          }
+         @keyframes chipMovement {
+             from {
+                 transform: translateY(0);
+             }
+             to {
+                 transform: translateY(-50px);
+             }
+         }
+         .chip-move {
+             animation: chipMovement 0.5s ease-in-out;
+         }
          @keyframes addTokens {
              from {
                  transform: scale(1);
@@ -207,6 +218,7 @@
        const doubleButton = document.getElementById('double');
        const betButton = document.getElementById('place-bet');
        const betInput = document.getElementById('bet-amount');
+       const chipStack = document.getElementById('chip-stack');
 
        function createDeck() {
            const suits = ['♠', '♥', '♦', '♣'];
@@ -270,6 +282,7 @@
        function updateUI() {
            dealerHandEl.innerHTML = '';
            playerHandEl.innerHTML = '';
+           chipStack.innerHTML = '';
 
            dealerHand.forEach((card, index) => {
                const cardEl = createCardElement(card, index !== 0 || !gameInProgress);
@@ -281,9 +294,28 @@
                playerHandEl.appendChild(cardEl);
            });
 
+           displayChips(currentBet, 'move');
            dealerScoreEl.textContent = gameInProgress ? '?' : dealerScore;
            playerScoreEl.textContent = playerScore;
            tokensEl.textContent = tokens;
+       }
+
+       function displayChips(amount, animation) {
+           const chipValues = [100, 50, 25, 10];
+           let remainingAmount = amount;
+           chipValues.forEach((value) => {
+               const count = Math.floor(remainingAmount / value);
+               for (let i = 0; i < count; i++) {
+                   const chip = document.createElement('div');
+                   chip.className = `chip chip-${value}`;
+                   if (animation === 'move') {
+                       chip.classList.add('chip-move');
+                   }
+                   chip.textContent = value;
+                   chipStack.appendChild(chip);
+               }
+               remainingAmount %= value;
+           });
        }
 
        function startGame() {
@@ -313,6 +345,11 @@
            doubleButton.disabled = true;
            betButton.disabled = false;
            betInput.disabled = false;
+           if (message.includes('win')) {
+               animateTokens(currentBet * 2);
+           } else if (message.includes('lose')) {
+               animateTokens(-currentBet);
+           }
            updateUI();
        }
 
@@ -326,73 +363,3 @@
        }
 
        function playerHit() {
-           if (!gameInProgress) return;
-           playerHand.push(dealCard());
-           playerScore = calculateScore(playerHand);
-           updateUI();
-           checkGameStatus();
-       }
-
-       function playerStand() {
-           if (!gameInProgress) return;
-           while (dealerScore < 17) {
-               dealerHand.push(dealCard());
-               dealerScore = calculateScore(dealerHand);
-           }
-           updateUI();
-
-           if (dealerScore > 21 || playerScore > dealerScore) {
-               endGame('You win!');
-               animateTokens(currentBet * 2);
-           } else if (dealerScore === playerScore) {
-               endGame("It's a tie!");
-               animateTokens(currentBet);
-           } else {
-               endGame('Dealer wins.');
-           }
-       }
-
-       function doubleBet() {
-           if (tokens >= currentBet && gameInProgress) {
-               tokens -= currentBet;
-               currentBet *= 2;
-               tokensEl.textContent = tokens;
-               playerHit();
-               if (gameInProgress) playerStand();
-           } else {
-               messageEl.textContent = 'Not enough tokens to double the bet.';
-           }
-       }
-
-       function placeBet() {
-           const betAmount = parseInt(betInput.value, 10);
-           if (betAmount > tokens) {
-               messageEl.textContent = 'Not enough tokens to place this bet.';
-               return;
-           }
-
-           if (betAmount < 10 || betAmount > 1000) {
-               messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
-               return;
-           }
-
-           currentBet = betAmount;
-           tokens -= betAmount;
-           tokensEl.textContent = tokens;
-           messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
-
-           hitButton.disabled = false;
-           standButton.disabled = false;
-           doubleButton.disabled = false;
-           betButton.disabled = true;
-           betInput.disabled = true;
-           startGame();
-       }
-
-       betButton.addEventListener('click', placeBet);
-       hitButton.addEventListener('click', playerHit);
-       standButton.addEventListener('click', playerStand);
-       doubleButton.addEventListener('click', doubleBet);
-   </script>
-</body>
-</html>

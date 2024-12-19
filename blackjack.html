@@ -119,6 +119,17 @@
          .deal-animation {
              animation: dealCard 0.5s ease-out; 
          }
+         @keyframes addTokens {
+             from {
+                 transform: scale(1);
+             }
+             to {
+                 transform: scale(1.2);
+             }
+         }
+         .token-animation {
+             animation: addTokens 0.5s ease-in-out;
+         }
          #chip-stack {
              display:flex; 
              justify-content:center; 
@@ -288,7 +299,7 @@
        function checkGameStatus() {
            if (playerScore === 21) {
                endGame('Blackjack! You win!');
-               tokens += currentBet * 2;
+               animateTokens(currentBet * 2);
            } else if (playerScore > 21) {
                endGame('Bust! You lose.');
            }
@@ -303,6 +314,15 @@
            betButton.disabled = false;
            betInput.disabled = false;
            updateUI();
+       }
+
+       function animateTokens(amount) {
+           tokens += amount;
+           tokensEl.textContent = tokens;
+           tokensEl.classList.add('token-animation');
+           setTimeout(() => {
+               tokensEl.classList.remove('token-animation');
+           }, 500);
        }
 
        function playerHit() {
@@ -323,10 +343,10 @@
 
            if (dealerScore > 21 || playerScore > dealerScore) {
                endGame('You win!');
-               tokens += currentBet * 2;
+               animateTokens(currentBet * 2);
            } else if (dealerScore === playerScore) {
                endGame("It's a tie!");
-               tokens += currentBet;
+               animateTokens(currentBet);
            } else {
                endGame('Dealer wins.');
            }
@@ -361,18 +381,4 @@
            tokensEl.textContent = tokens;
            messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
 
-           hitButton.disabled = false;
-           standButton.disabled = false;
-           doubleButton.disabled = false;
-           betButton.disabled = true;
-           betInput.disabled = true;
-           startGame();
-       }
-
-       betButton.addEventListener('click', placeBet);
-       hitButton.addEventListener('click', playerHit);
-       standButton.addEventListener('click', playerStand);
-       doubleButton.addEventListener('click', doubleBet);
-   </script>
-</body>
-</html>
+          

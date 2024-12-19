@@ -214,10 +214,13 @@
                const j = Math.floor(Math.random() * (i + 1));
                [deck[i], deck[j]] = [deck[j], deck[i]];
            }
+           console.log("Deck shuffled", deck);
        }
 
        function dealCard() {
-           return deck.pop();
+           const card = deck.pop();
+           console.log("Dealt card: ", card);
+           return card;
        }
 
        function calculateScore(hand) {
@@ -237,6 +240,7 @@
                score -= 10;
                aces -= 1;
            }
+           console.log("Hand score: ", score);
            return score;
        }
 
@@ -253,10 +257,12 @@
                cardEl.textContent = '?';
                cardEl.style.backgroundColor = '#808EFF';
            }
+           console.log("Created card element: ", cardEl);
            return cardEl;
        }
 
        function updateUI() {
+           console.log("Updating UI");
            dealerHandEl.innerHTML = '';
            playerHandEl.innerHTML = '';
 
@@ -276,6 +282,7 @@
        }
 
        function startGame() {
+           console.log("Starting game");
            playerHand = [dealCard(), dealCard()];
            dealerHand = [dealCard(), dealCard()];
            playerScore = calculateScore(playerHand);
@@ -294,6 +301,7 @@
        }
 
        function endGame(message) {
+           console.log("Ending game");
            gameInProgress = false;
            messageEl.textContent = message;
            hitButton.disabled = true;
@@ -306,6 +314,7 @@
 
        function playerHit() {
            if (!gameInProgress) return;
+           console.log("Player hits");
            playerHand.push(dealCard());
            playerScore = calculateScore(playerHand);
            updateUI();
@@ -314,6 +323,7 @@
 
        function playerStand() {
            if (!gameInProgress) return;
+           console.log("Player stands");
            while (dealerScore < 17) {
                dealerHand.push(dealCard());
                dealerScore = calculateScore(dealerHand);
@@ -333,6 +343,7 @@
 
        function doubleBet() {
            if (tokens >= currentBet && gameInProgress) {
+               console.log("Player doubles bet");
                tokens -= currentBet;
                currentBet *= 2;
                tokensEl.textContent = tokens;
@@ -345,6 +356,7 @@
 
        function placeBet() {
            const betAmount = parseInt(betInput.value, 10);
+           console.log("Placing bet: ", betAmount);
            if (betAmount > tokens) {
                messageEl.textContent = 'Not enough tokens to place this bet.';
                return;

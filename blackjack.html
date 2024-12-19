@@ -363,3 +363,74 @@
        }
 
        function playerHit() {
+           if (!gameInProgress) return;
+           playerHand.push(dealCard());
+           playerScore = calculateScore(playerHand);
+           updateUI();
+           checkGameStatus();
+       }
+
+       function playerStand() {
+           if (!gameInProgress) return;
+           while (dealerScore < 17) {
+               dealerHand.push(dealCard());
+               dealerScore = calculateScore(dealerHand);
+           }
+           updateUI();
+
+           if (dealerScore > 21 || playerScore > dealerScore) {
+               endGame('You win!');
+               animateTokens(currentBet * 2);
+           } else if (dealerScore === playerScore) {
+               endGame("It's a tie!");
+               animateTokens(currentBet);
+           } else {
+               endGame('Dealer wins.');
+           }
+       }
+
+       function doubleBet() {
+           if (tokens >= currentBet && gameInProgress) {
+               tokens -= currentBet;
+               currentBet *= 2;
+               tokensEl.textContent = tokens;
+               playerHit();
+               if (gameInProgress) playerStand();
+           } else {
+               messageEl.textContent = 'Not enough tokens to double the bet.';
+           }
+       }
+
+       function placeBet() {
+           const betAmount = parseInt(betInput.value, 10);
+           if (betAmount > tokens) {
+               messageEl.textContent = 'Not enough tokens to place this bet.';
+               return;
+           }
+
+           if (betAmount < 10 || betAmount > 1000) {
+               messageEl.textContent = 'Bet must be between 10 and 1000 tokens.';
+               return;
+           }
+
+           currentBet = betAmount;
+           tokens -= betAmount;
+           tokensEl.textContent = tokens;
+           messageEl.textContent = `Bet placed: ${currentBet} tokens. Good luck!`;
+
+           hitButton.disabled = false;
+           standButton.disabled = false;
+           doubleButton.disabled = false;
+           betButton.disabled = true;
+           betInput.disabled = true;
+           startGame();
+       }
+
+       betButton.addEventListener('click', placeBet);
+       hitButton.addEventListener('click', playerHit);
+       standButton.addEventListener('click', playerStand);
+       doubleButton.addEventListener('click', doubleBet);
+   </script>
+</body>
+</html>
+          

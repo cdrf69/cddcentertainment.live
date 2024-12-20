@@ -209,6 +209,59 @@
        const hitButton = document.getElementById('hit');
        const standButton = document.getElementById('stand');
        const doubleButton = document.getElementById('double');
+       const dealerHandEl = document.getElementById('dealer-hand');
+       const playerHandEl = document.getElementById('player-hand');
+       const dealerScoreEl = document.getElementById('dealer-score');
+       const playerScoreEl = document.getElementById('player-score');
+
+       function dealCard() {
+           const suits = ['♠', '♥', '♦', '♣'];
+           const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+           const suit = suits[Math.floor(Math.random() * suits.length)];
+           const value = values[Math.floor(Math.random() * values.length)];
+           return { suit, value };
+       }
+
+       function createCardElement(card, faceDown = false) {
+           const cardEl = document.createElement('div');
+           cardEl.className = 'card deal-animation';
+
+           if (faceDown) {
+               cardEl.style.backgroundColor = '#808EFF';
+               cardEl.textContent = '?';
+           } else {
+               cardEl.textContent = card.suit;
+               cardEl.dataset.value = card.value;
+               if (card.suit === '♥' || card.suit === '♦') {
+                   cardEl.classList.add('red');
+               }
+           }
+
+           return cardEl;
+       }
+
+       function calculateScore(hand) {
+           let score = 0;
+           let aces = 0;
+
+           hand.forEach(card => {
+               if (card.value === 'A') {
+                   aces++;
+                   score += 11;
+               } else if (['K', 'Q', 'J'].includes(card.value)) {
+                   score += 10;
+               } else {
+                   score += parseInt(card.value, 10);
+               }
+           });
+
+           while (score > 21 && aces > 0) {
+               score -= 10;
+               aces--;
+           }
+
+           return score;
+       }
 
        function placeBet() {
            const betAmount = parseInt(betInput.value, 10);
@@ -235,8 +288,29 @@
        }
 
        function startGame() {
-           messageEl.textContent = 'Game started!';
-           // Add your game logic here
+           playerHandEl.innerHTML = '';
+           dealerHandEl.innerHTML = '';
+
+           let playerHand = [dealCard(), dealCard()];
+           let dealerHand = [dealCard(), dealCard()];
+
+           const playerScore = calculateScore(playerHand);
+           const dealerScore = calculateScore(dealerHand);
+
+           playerHand.forEach(card => {
+               const cardEl = createCardElement(card);
+               playerHandEl.appendChild(cardEl);
+           });
+
+           dealerHand.forEach((card, index) => {
+               const cardEl = createCardElement(card, index === 0); // First card face up
+               dealerHandEl.appendChild(cardEl);
+           });
+
+           playerScoreEl.textContent = playerScore;
+           dealerScoreEl.textContent = '?'; // Hide dealer score initially
+
+           messageEl.textContent = 'Game started! Good luck!';
        }
 
        betButton.addEventListener('click', placeBet);

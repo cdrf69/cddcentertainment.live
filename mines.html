@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mines - CDDC</title>
     <style>
-        /* Copy the styles from your main page and add game-specific styles here */
         body {
             font-family: 'Courier New', monospace;
             line-height: 1.6;
@@ -18,9 +17,60 @@
             width: 80%;
             margin: auto;
             overflow: hidden;
+            padding: 20px;
         }
         h1 {
             color: #E380F0;
+            text-align: center;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background-color: #3D3B47;
+            border: 2px solid #808EFF;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #E380F0;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            background-color: #3D3B47;
+            color: #808EFF;
+            border: 2px solid #808EFF;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #E380F0;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -28,9 +78,110 @@
     <div class="container">
         <h1>Mines</h1>
         <p>Welcome to Mines! Discover, Delight, Win Big!</p>
-        <!-- Add your Mines game content here -->
-        <a href="individuals.html">Back to Games</a>
+        
+        <div class="controls">
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <button id="start-game">Start Game</button>
+            <button id="cash-out" disabled>Cash Out</button>
+        </div>
+        
+        <div class="game-board" id="game-board"></div>
+        
+        <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
+
+    <script>
+        const gameBoard = document.getElementById('game-board');
+        const startButton = document.getElementById('start-game');
+        const cashOutButton = document.getElementById('cash-out');
+        const betInput = document.getElementById('bet-amount');
+        
+        let mines = [];
+        let revealedCells = 0;
+        let gameActive = false;
+
+        function createBoard() {
+            gameBoard.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => revealCell(i));
+                gameBoard.appendChild(cell);
+            }
+        }
+
+        function startGame() {
+            if (!betInput.value || betInput.value < 1) {
+                alert('Please enter a valid bet amount.');
+                return;
+            }
+            
+            gameActive = true;
+            revealedCells = 0;
+            mines = [];
+            
+            while (mines.length < 5) {
+                const mine = Math.floor(Math.random() * 25);
+                if (!mines.includes(mine)) {
+                    mines.push(mine);
+                }
+            }
+            
+            createBoard();
+            
+            startButton.disabled = true; 
+			cashOutButton.disabled = false; 
+		}
+
+		function revealCell(index) {
+			if (!gameActive) return;
+
+			const cell = gameBoard.children[index];
+			if (cell.textContent) return;
+
+			if (mines.includes(index)) {
+				cell.textContent = '💣';
+				gameOver();
+			} else {
+				cell.textContent = '💎';
+				revealedCells++;
+				if (revealedCells === 20) {
+					gameWon();
+				}
+			}
+		}
+
+		function gameOver() {
+			gameActive = false; 
+			alert('Game Over! You hit a mine.');
+			resetGame();
+		}
+
+		function gameWon() {
+			gameActive = false; 
+			alert('Congratulations! You won!');
+			resetGame();
+		}
+
+		function cashOut() {
+			if (revealedCells > 0) {
+				alert(`Cashed out with ${revealedCells} gems revealed!`);
+				resetGame();
+			}
+		}
+
+		function resetGame() {
+			startButton.disabled = false; 
+			cashOutButton.disabled = true; 
+			betInput.value = ''; 
+			createBoard(); 
+		}
+
+		startButton.addEventListener('click', startGame); 
+		cashOutButton.addEventListener('click', cashOut); 
+		
+		createBoard(); 
+    </script>
 </body>
 </html>
-

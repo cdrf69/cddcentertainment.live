@@ -82,11 +82,14 @@
         
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
             <button id="start-game">Start Game</button>
             <button id="cash-out" disabled>Cash Out</button>
         </div>
         
         <div class="game-board" id="game-board"></div>
+        
+        <h2>Current Multiplier: <span id="multiplier">1.00x</span></h2>
         
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
@@ -96,13 +99,16 @@
         const startButton = document.getElementById('start-game');
         const cashOutButton = document.getElementById('cash-out');
         const betInput = document.getElementById('bet-amount');
+        const mineCountInput = document.getElementById('mine-count');
         const balanceDisplay = document.getElementById('balance');
+        const multiplierDisplay = document.getElementById('multiplier');
         
         let mines = [];
         let revealedCells = 0;
         let gameActive = false;
         let balance = 1000;
         let currentBet = 0;
+        let currentMultiplier = 1;
 
         function createBoard() {
             gameBoard.innerHTML = '';
@@ -117,8 +123,15 @@
 
         function startGame() {
             currentBet = parseInt(betInput.value);
+            const mineCount = parseInt(mineCountInput.value);
+            
             if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
                 alert('Please enter a valid bet amount within your balance.');
+                return;
+            }
+            
+            if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
+                alert('Please enter a valid number of mines (1-24).');
                 return;
             }
             
@@ -128,8 +141,10 @@
             gameActive = true;
             revealedCells = 0;
             mines = [];
+            currentMultiplier = 1;
+            updateMultiplier();
             
-            while (mines.length < 5) {
+            while (mines.length < mineCount) {
                 const mine = Math.floor(Math.random() * 25);
                 if (!mines.includes(mine)) {
                     mines.push(mine);
@@ -154,10 +169,18 @@
             } else {
                 cell.textContent = '💎';
                 revealedCells++;
-                if (revealedCells === 20) {
+                updateMultiplier();
+                if (revealedCells === 25 - mines.length) {
                     gameWon();
                 }
             }
+        }
+
+        function updateMultiplier() {
+            const mineCount = mines.length;
+            const safeSquares = 25 - mineCount;
+            currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
+            multiplierDisplay.textContent = currentMultiplier + 'x';
         }
 
         function gameOver() {
@@ -168,7 +191,7 @@
 
         function gameWon() {
             gameActive = false;
-            const winnings = currentBet * 3; // Example multiplier
+            const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
             alert(`Congratulations! You won $${winnings}!`);
@@ -177,7 +200,7 @@
 
         function cashOut() {
             if (revealedCells > 0) {
-                const winnings = Math.floor(currentBet * (1 + revealedCells * 0.1)); // Example multiplier
+                const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
                 alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
@@ -190,6 +213,8 @@
             cashOutButton.disabled = true;
             betInput.value = '';
             currentBet = 0;
+            currentMultiplier = 1;
+            updateMultiplier();
             createBoard();
         }
 
@@ -202,6 +227,7 @@
         
         createBoard();
         updateBalance();
+        updateMultiplier();
     </script>
 </body>
 </html>

@@ -214,6 +214,11 @@
        const dealerScoreEl = document.getElementById('dealer-score');
        const playerScoreEl = document.getElementById('player-score');
 
+       let playerHand = [];
+       let dealerHand = [];
+       let playerScore = 0;
+       let dealerScore = 0;
+
        function dealCard() {
            const suits = ['♠', '♥', '♦', '♣'];
            const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -291,11 +296,11 @@
            playerHandEl.innerHTML = '';
            dealerHandEl.innerHTML = '';
 
-           let playerHand = [dealCard(), dealCard()];
-           let dealerHand = [dealCard(), dealCard()];
+           playerHand = [dealCard(), dealCard()];
+           dealerHand = [dealCard(), dealCard()];
 
-           const playerScore = calculateScore(playerHand);
-           const dealerScore = calculateScore(dealerHand);
+           playerScore = calculateScore(playerHand);
+           dealerScore = calculateScore(dealerHand);
 
            playerHand.forEach(card => {
                const cardEl = createCardElement(card);
@@ -313,25 +318,70 @@
            messageEl.textContent = 'Game started! Good luck!';
        }
 
-       betButton.addEventListener('click', placeBet);
+       function playerHit() {
+           const card = dealCard();
+           playerHand.push(card);
+           const cardEl = createCardElement(card);
+           playerHandEl.appendChild(cardEl);
+           playerScore = calculateScore(playerHand);
+           playerScoreEl.textContent = playerScore;
 
-       betInput.addEventListener('input', () => {
-           const betAmount = parseInt(betInput.value, 10);
-           if (isNaN(betAmount) || betAmount < 10 || betAmount > 1000 || betAmount > tokens) {
-               betInput.classList.add('invalid-input');
+           if (playerScore > 21) {
+               endGame('Bust! You lose.');
+           }
+       }
+
+       function playerStand() {
+           while (dealerScore < 17) {
+               const card = dealCard();
+               dealerHand.push(card);
+               const cardEl = createCardElement(card);
+               dealerHandEl.appendChild(cardEl);
+               dealerScore = calculateScore(dealerHand);
+           }
+
+           dealerScoreEl.textContent = dealerScore;
+
+           if (dealerScore > 21 || playerScore > dealerScore) {
+               endGame('You win!');
+           } else if (dealerScore === playerScore) {
+               endGame("It's a tie!");
            } else {
-               betInput.classList.remove('invalid-input');
+               endGame('Dealer wins.');
            }
-       });
+       }
 
-       const style = document.createElement('style');
-       style.textContent = `
-           .invalid-input {
-               border: 2px solid red;
-               outline: none;
+       function playerDouble() {
+           if (tokens < currentBet) {
+               messageEl.textContent = "Not enough tokens to double the bet.";
+               return;
            }
-       `;
-       document.head.appendChild(style);
+           currentBet *= 2;
+           tokens -= currentBet / 2;
+           tokensEl.textContent = tokens;
+           messageEl.textContent = `Bet doubled to ${currentBet} tokens.`;
+           playerHit();
+           if (playerScore <= 21) {
+               playerStand();
+           }
+       }
+
+       function playerSplit() {
+           messageEl.textContent = "Split is not implemented yet.";
+       }
+
+       function endGame(message) {
+           messageEl.textContent = message;
+           hitButton.disabled = true;
+           standButton.disabled = true;
+           doubleButton.disabled = true;
+           betButton.disabled = false;
+           betInput.disabled = false;
+       }
+
+       hitButton.addEventListener('click', playerHit);
+       standButton.addEventListener('click', playerStand);
+       doubleButton.addEventListener('click', playerDouble);
    </script>
 </body>
 </html>

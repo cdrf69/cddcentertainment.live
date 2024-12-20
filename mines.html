@@ -19,7 +19,7 @@
             overflow: hidden;
             padding: 20px;
         }
-        h1 {
+        h1, h2 {
             color: #E380F0;
             text-align: center;
         }
@@ -77,6 +77,7 @@
 <body>
     <div class="container">
         <h1>Mines</h1>
+        <h2>Balance: $<span id="balance">1000</span></h2>
         <p>Welcome to Mines! Discover, Delight, Win Big!</p>
         
         <div class="controls">
@@ -95,10 +96,13 @@
         const startButton = document.getElementById('start-game');
         const cashOutButton = document.getElementById('cash-out');
         const betInput = document.getElementById('bet-amount');
+        const balanceDisplay = document.getElementById('balance');
         
         let mines = [];
         let revealedCells = 0;
         let gameActive = false;
+        let balance = 1000;
+        let currentBet = 0;
 
         function createBoard() {
             gameBoard.innerHTML = '';
@@ -112,10 +116,14 @@
         }
 
         function startGame() {
-            if (!betInput.value || betInput.value < 1) {
-                alert('Please enter a valid bet amount.');
+            currentBet = parseInt(betInput.value);
+            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
+                alert('Please enter a valid bet amount within your balance.');
                 return;
             }
+            
+            balance -= currentBet;
+            updateBalance();
             
             gameActive = true;
             revealedCells = 0;
@@ -130,58 +138,70 @@
             
             createBoard();
             
-            startButton.disabled = true; 
-			cashOutButton.disabled = false; 
-		}
+            startButton.disabled = true;
+            cashOutButton.disabled = false;
+        }
 
-		function revealCell(index) {
-			if (!gameActive) return;
+        function revealCell(index) {
+            if (!gameActive) return;
 
-			const cell = gameBoard.children[index];
-			if (cell.textContent) return;
+            const cell = gameBoard.children[index];
+            if (cell.textContent) return;
 
-			if (mines.includes(index)) {
-				cell.textContent = '💣';
-				gameOver();
-			} else {
-				cell.textContent = '💎';
-				revealedCells++;
-				if (revealedCells === 20) {
-					gameWon();
-				}
-			}
-		}
+            if (mines.includes(index)) {
+                cell.textContent = '💣';
+                gameOver();
+            } else {
+                cell.textContent = '💎';
+                revealedCells++;
+                if (revealedCells === 20) {
+                    gameWon();
+                }
+            }
+        }
 
-		function gameOver() {
-			gameActive = false; 
-			alert('Game Over! You hit a mine.');
-			resetGame();
-		}
+        function gameOver() {
+            gameActive = false;
+            alert('Game Over! You hit a mine.');
+            resetGame();
+        }
 
-		function gameWon() {
-			gameActive = false; 
-			alert('Congratulations! You won!');
-			resetGame();
-		}
+        function gameWon() {
+            gameActive = false;
+            const winnings = currentBet * 3; // Example multiplier
+            balance += winnings;
+            updateBalance();
+            alert(`Congratulations! You won $${winnings}!`);
+            resetGame();
+        }
 
-		function cashOut() {
-			if (revealedCells > 0) {
-				alert(`Cashed out with ${revealedCells} gems revealed!`);
-				resetGame();
-			}
-		}
+        function cashOut() {
+            if (revealedCells > 0) {
+                const winnings = Math.floor(currentBet * (1 + revealedCells * 0.1)); // Example multiplier
+                balance += winnings;
+                updateBalance();
+                alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
+                resetGame();
+            }
+        }
 
-		function resetGame() {
-			startButton.disabled = false; 
-			cashOutButton.disabled = true; 
-			betInput.value = ''; 
-			createBoard(); 
-		}
+        function resetGame() {
+            startButton.disabled = false;
+            cashOutButton.disabled = true;
+            betInput.value = '';
+            currentBet = 0;
+            createBoard();
+        }
 
-		startButton.addEventListener('click', startGame); 
-		cashOutButton.addEventListener('click', cashOut); 
-		
-		createBoard(); 
+        function updateBalance() {
+            balanceDisplay.textContent = balance;
+        }
+
+        startButton.addEventListener('click', startGame);
+        cashOutButton.addEventListener('click', cashOut);
+        
+        createBoard();
+        updateBalance();
     </script>
 </body>
 </html>

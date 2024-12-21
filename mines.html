@@ -95,16 +95,38 @@
             text-align: center;
             margin-top: 20px;
         }
+        .balance-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #3D3B47;
+        }
+        .balance {
+            border: 2px solid #808EFF;
+            border-radius: 5px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            color: #E380F0;
+        }
+        .back-arrow {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #808EFF;
+            font-size: 28px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        
-        <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; background-color: #3D3B47;">
-    <div style="border: 2px solid #808EFF; border-radius: 5px; padding: 5px 10px; display: flex; align-items: center;"><span id="balance" style="font-size: 18px; color: #E380F0;">1000</span></div>
-    <a href="individuals.html" style="margin-right: 10px; text-decoration: none; color: #808EFF; font-size: 24px; font-weight: bold;">←</a>
-</div>
-        
+        <div class="balance-container">
+            <a href="individuals.html" class="back-arrow">←</a>
+            <div class="balance"><span id="balance">1000</span></div>
+        </div>
         
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">

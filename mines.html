@@ -13,8 +13,8 @@
             background-color: #2F2D37;
             color: #808EFF;
             display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            justify-content: center;
+            align-items: center;
             height: 100vh;
         }
         .container {
@@ -29,11 +29,10 @@
         }
         .game-board {
             display: grid;
-            grid-template-columns: repeat(5, 60px); /* Fixed column width */
-            gap: 8px; /* Adjusted gap for equal spacing */
-            margin: 0 auto; /* Center the game board */
+            grid-template-columns: repeat(5, 60px);
+            gap: 8px;
+            margin: 20px auto;
             width: fit-content;
-            height: fit-content; /* Ensures proper layout */
         }
         .cell {
             width: 60px;
@@ -46,34 +45,33 @@
             align-items: center;
             font-size: 24px;
             color: #E380F0;
-            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
+            transition: transform 0.1s ease, background-color 0.1s ease;
         }
         .cell:active {
-            transform: scale(0.9); /* Shrinks slightly when clicked */
-            background-color: #4D4A57; /* Slightly darker shade on click */
+            transform: scale(0.9);
+            background-color: #4D4A57;
         }
         .controls {
-            margin-top: 40px; /* Increased margin to move button further from squares */
+            margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 10px; /* Added space between controls */
-            align-items: center;
+            gap: 10px;
+            justify-content: center;
         }
         button {
             background-color: #E380F0;
             color: #2F2D37;
             border: none;
-            padding: 15px 50px; /* Adjusted padding for wider and slightly taller button */
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 20px; /* Increased font size for button text */
-            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
+            font-size: 18px;
+            transition: transform 0.1s ease, background-color 0.1s ease;
         }
         button:active {
-            transform: scale(0.95); /* Shrinks slightly when clicked */
-            background-color: #D370D0; /* Slightly darker shade on click */
+            transform: scale(0.95);
+            background-color: #D370D0;
         }
         input[type="number"] {
             background-color: #3D3B47;
@@ -88,50 +86,28 @@
             margin-top: 20px;
             color: #E380F0;
             text-decoration: none;
-        }
-        .winning-display {
-            font-size: 24px;
-            color: #E380F0;
             text-align: center;
-            margin-top: 20px;
         }
-        .balance-container {
+        .balance-display {
             position: absolute;
             top: 10px;
             left: 10px;
-            display: flex;
-            align-items: center;
-            background-color: #3D3B47;
-        }
-        .balance {
-            border: 2px solid #808EFF;
-            border-radius: 5px;
-            padding: 5px 10px;
-            display: flex;
-            align-items: center;
             font-size: 18px;
             color: #E380F0;
-        }
-        .back-arrow {
-            margin-right: 10px;
-            text-decoration: none;
-            color: #808EFF;
-            font-size: 28px;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="balance-container">
-            <a href="individuals.html" class="back-arrow">←</a>
-            <div class="balance"><span id="balance">1000</span></div>
+        <div class="balance-display">Balance: <span id="balance">1000</span></div>
+        <h2>Current Multiplier: <span id="multiplier">1.00x</span></h2>
+        <div class="controls">
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
+            <button id="game-button">Play</button>
         </div>
-        
-        <h2><span id="multiplier">1.00x</span></h2><div class="controls">$1
-        
-        <div class="winning-display" id="winning-display"><span id="current-bet-display">0</span></div>
-
+        <div class="game-board" id="game-board"></div>
+        <h2>Bet Amount: $<span id="current-bet-display">0</span></h2>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
 
@@ -142,9 +118,8 @@
         const mineCountInput = document.getElementById('mine-count');
         const balanceDisplay = document.getElementById('balance');
         const multiplierDisplay = document.getElementById('multiplier');
-        const winningDisplay = document.getElementById('winning-display');
         const currentBetDisplay = document.getElementById('current-bet-display');
-        
+
         let mines = [];
         let revealedCells = 0;
         let gameActive = false;
@@ -166,38 +141,37 @@
         function startGame() {
             currentBet = parseInt(betInput.value);
             const mineCount = parseInt(mineCountInput.value);
-            
+
             if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
                 alert('Please enter a valid bet amount within your balance.');
                 return;
             }
-            
+
             if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
                 alert('Please enter a valid number of mines (1-24).');
                 return;
             }
-            
+
             balance -= currentBet;
             updateBalance();
             currentBetDisplay.textContent = currentBet;
-            
+
             gameActive = true;
             revealedCells = 0;
             mines = [];
             currentMultiplier = 1;
             updateMultiplier();
-            
+
             while (mines.length < mineCount) {
                 const mine = Math.floor(Math.random() * 25);
                 if (!mines.includes(mine)) {
                     mines.push(mine);
                 }
             }
-            
+
             createBoard();
-            
+
             gameButton.textContent = 'Cash Out';
-            winningDisplay.textContent = `Bet Amount: $${currentBet}`;
         }
 
         function cashOut() {
@@ -205,9 +179,8 @@
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
-                winningDisplay.textContent = `Final Amount: $${winnings}`;
-                gameActive = false;
-                gameButton.textContent = 'Play Again';
+                alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
+                resetGame();
             }
         }
 
@@ -224,7 +197,6 @@
                 cell.textContent = '💎';
                 revealedCells++;
                 updateMultiplier();
-                updateDisplayedBet();
                 if (revealedCells === 25 - mines.length) {
                     gameWon();
                 }
@@ -234,29 +206,14 @@
         function updateMultiplier() {
             const mineCount = mines.length;
             const safeSquares = 25 - mineCount;
-            currentMultiplier = (safeSquares / (safeSquares - revealedCells));
-            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
-        }
-
-        function updateDisplayedBet() {
-            const updatedBet = Math.floor(currentBet * currentMultiplier);
-            winningDisplay.textContent = `Current Amount: $${updatedBet}`;
+            currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
+            multiplierDisplay.textContent = `${currentMultiplier}x`;
         }
 
         function gameOver() {
             gameActive = false;
-            winningDisplay.textContent = 'Game Over! You hit a mine.';
-            revealAllMines();
-            gameButton.textContent = 'Play Again';
-        }
-
-        function revealAllMines() {
-            for (let i = 0; i < 25; i++) {
-                const cell = gameBoard.children[i];
-                if (mines.includes(i) && !cell.textContent) {
-                    cell.textContent = '💣';
-                }
-            }
+            alert('Game Over! You hit a mine.');
+            resetGame();
         }
 
         function gameWon() {
@@ -264,8 +221,8 @@
             const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
-            winningDisplay.textContent = `Final Amount: $${winnings}`;
-            gameButton.textContent = 'Play Again';
+            alert(`Congratulations! You won $${winnings}!`);
+            resetGame();
         }
 
         function resetGame() {
@@ -283,13 +240,13 @@
         }
 
         gameButton.addEventListener('click', () => {
-            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
+            if (gameButton.textContent === 'Play') {
                 startGame();
-            } else if (gameButton.textContent === 'Cash Out') {
+            } else {
                 cashOut();
             }
         });
-        
+
         createBoard();
         updateBalance();
         updateMultiplier();

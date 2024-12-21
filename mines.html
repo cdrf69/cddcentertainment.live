@@ -128,7 +128,6 @@
         let balance = 1000;
         let currentBet = 0;
         let currentMultiplier = 1;
-        let winningInterval;
 
         function createBoard() {
             gameBoard.innerHTML = '';
@@ -180,7 +179,6 @@
 
         function cashOut() {
             if (revealedCells > 0) {
-                clearInterval(winningInterval);
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
@@ -202,6 +200,7 @@
                 cell.textContent = '💎';
                 revealedCells++;
                 updateMultiplier();
+                updateDisplayedBet();
                 if (revealedCells === 25 - mines.length) {
                     gameWon();
                 }
@@ -215,15 +214,18 @@
             multiplierDisplay.textContent = currentMultiplier + 'x';
         }
 
+        function updateDisplayedBet() {
+            const updatedBet = (currentBet * currentMultiplier).toFixed(2);
+            winningDisplay.textContent = `Current Amount: $${updatedBet}`;
+        }
+
         function gameOver() {
-            clearInterval(winningInterval);
             gameActive = false;
             winningDisplay.textContent = 'Game Over! You hit a mine.';
             resetGame();
         }
 
         function gameWon() {
-            clearInterval(winningInterval);
             gameActive = false;
             const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
@@ -232,20 +234,7 @@
             resetGame();
         }
 
-        function startWinningDisplay() {
-            let displayAmount = currentBet;
-            winningInterval = setInterval(() => {
-                if (displayAmount >= currentBet * currentMultiplier) {
-                    clearInterval(winningInterval);
-                } else {
-                    displayAmount += currentBet * 0.05; // Increment by 5% of bet
-                    winningDisplay.textContent = `Current Amount: $${displayAmount.toFixed(2)}`;
-                }
-            }, 100);
-        }
-
         function resetGame() {
-            clearInterval(winningInterval);
             gameActive = false;
             gameButton.textContent = 'Play Again';
             betInput.value = '';
@@ -261,7 +250,6 @@
 
         gameButton.addEventListener('click', () => {
             if (gameActive) {
-                startWinningDisplay();
                 cashOut();
             } else {
                 startGame();

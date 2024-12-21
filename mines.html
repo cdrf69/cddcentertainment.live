@@ -13,12 +13,12 @@
             background-color: #2F2D37;
             color: #808EFF;
             display: flex;
-            justify-content: center; /* Center X-axis alignment */
-            align-items: center; /* Center Y-axis alignment */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
             height: 100vh;
         }
         .container {
-            width: 80%;
+            width: fit-content;
             margin: auto;
             overflow: hidden;
             padding: 20px;
@@ -32,11 +32,11 @@
             grid-template-columns: repeat(5, 60px); /* Fixed column width for tighter spacing */
             gap: 2px; /* Reduced gap for closer spacing */
             margin-top: 20px;
-            border: 2px solid #808EFF; /* Reverted border to consistent size */
+            border: 3px solid #808EFF; /* Properly sized border */
             border-radius: 8px; /* Rounded border corners */
-            padding: 10px; /* Added padding to ensure square shape */
+            padding: 10px; /* Padding to create space inside the border */
             width: fit-content;
-            height: fit-content; /* Ensure the border creates a square */
+            height: fit-content; /* Ensures proper border and layout */
         }
         .cell {
             width: 60px;

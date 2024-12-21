@@ -183,7 +183,7 @@
                 balance += winnings;
                 updateBalance();
                 winningDisplay.textContent = `Final Amount: $${winnings}`;
-                resetGame();
+                gameActive = false;
             }
         }
 
@@ -222,7 +222,16 @@
         function gameOver() {
             gameActive = false;
             winningDisplay.textContent = 'Game Over! You hit a mine.';
-            resetGame();
+            revealAllMines();
+        }
+
+        function revealAllMines() {
+            for (let i = 0; i < 25; i++) {
+                const cell = gameBoard.children[i];
+                if (mines.includes(i) && !cell.textContent) {
+                    cell.textContent = '💣';
+                }
+            }
         }
 
         function gameWon() {
@@ -231,7 +240,6 @@
             balance += winnings;
             updateBalance();
             winningDisplay.textContent = `Final Amount: $${winnings}`;
-            resetGame();
         }
 
         function resetGame() {

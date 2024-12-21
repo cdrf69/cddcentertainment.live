@@ -29,20 +29,16 @@
         }
         .game-board {
             display: grid;
-            grid-template-columns: repeat(5, 60px); /* Fixed column width for tighter spacing */
-            gap: 2px; /* Reduced gap for closer spacing */
+            grid-template-columns: repeat(5, 60px); /* Fixed column width */
+            gap: 8px; /* Adjusted gap for equal spacing */
             margin: 0 auto; /* Center the game board */
-            border: 3px solid #808EFF; /* Properly sized border */
-            border-radius: 8px; /* Rounded border corners */
-            padding: 10px; /* Padding to create space inside the border */
             width: fit-content;
-            height: fit-content; /* Ensures proper border and layout */
+            height: fit-content; /* Ensures proper layout */
         }
         .cell {
             width: 60px;
             height: 60px;
             background-color: #3D3B47;
-            border: 2px solid #808EFF;
             border-radius: 5px;
             cursor: pointer;
             display: flex;

@@ -107,7 +107,7 @@
         
         <h2>Current Multiplier: <span id="multiplier">1.00x</span></h2>
         
-        <div class="winning-display" id="winning-display"></div>
+        <div class="winning-display" id="winning-display">Bet Amount: $<span id="current-bet-display">0</span></div>
 
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
@@ -120,6 +120,7 @@
         const balanceDisplay = document.getElementById('balance');
         const multiplierDisplay = document.getElementById('multiplier');
         const winningDisplay = document.getElementById('winning-display');
+        const currentBetDisplay = document.getElementById('current-bet-display');
         
         let mines = [];
         let revealedCells = 0;
@@ -156,6 +157,7 @@
             
             balance -= currentBet;
             updateBalance();
+            currentBetDisplay.textContent = currentBet.toFixed(2);
             
             gameActive = true;
             revealedCells = 0;
@@ -173,7 +175,7 @@
             createBoard();
             
             gameButton.textContent = 'Cash Out';
-            winningDisplay.textContent = '';
+            winningDisplay.textContent = `Bet Amount: $${currentBet.toFixed(2)}`;
         }
 
         function cashOut() {
@@ -182,7 +184,7 @@
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
-                winningDisplay.textContent = `You won $${winnings.toFixed(2)}!`;
+                winningDisplay.textContent = `Final Amount: $${winnings.toFixed(2)}`;
                 resetGame();
             }
         }
@@ -226,18 +228,18 @@
             const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
-            winningDisplay.textContent = `Congratulations! You won $${winnings.toFixed(2)}!`;
+            winningDisplay.textContent = `Final Amount: $${winnings.toFixed(2)}`;
             resetGame();
         }
 
         function startWinningDisplay() {
-            let displayAmount = 0;
+            let displayAmount = currentBet;
             winningInterval = setInterval(() => {
                 if (displayAmount >= currentBet * currentMultiplier) {
                     clearInterval(winningInterval);
                 } else {
                     displayAmount += currentBet * 0.05; // Increment by 5% of bet
-                    winningDisplay.textContent = `Winnings: $${displayAmount.toFixed(2)}`;
+                    winningDisplay.textContent = `Current Amount: $${displayAmount.toFixed(2)}`;
                 }
             }, 100);
         }

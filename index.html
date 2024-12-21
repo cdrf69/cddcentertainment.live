@@ -3,278 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDDC - Sign In/Sign Up</title>
+    <title>Mines - CDDC</title>
     <style>
-        :root {
-            --primary-color: #E380F0;
-            --secondary-color: #808EFF;
-            --background-color: #2F2D37;
-            --text-color: #808EFF;
-        }
-
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background-color: var(--background-color);
-            color: var(--text-color);
             font-family: 'Courier New', monospace;
             line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #2F2D37;
+            color: #808EFF;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh;
         }
-
         .container {
-            width: 80%;
+            width: fit-content;
             margin: auto;
             overflow: hidden;
+            padding: 20px;
         }
-
-        header {
-            background: #000;
-            padding: 10px 0;
-            min-height: 70px;
-            border-bottom: var(--primary-color) 2px solid;
-            border-radius: 10px;
+        h1, h2 {
+            color: #E380F0;
+            text-align: center;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 60px); /* Fixed column width */
+            gap: 8px; /* Adjusted gap for equal spacing */
+            margin: 0 auto; /* Center the game board */
+            width: fit-content;
+            height: fit-content; /* Ensures proper layout */
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background-color: #3D3B47;
+            border-radius: 5px;
+            cursor: pointer;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
+            font-size: 24px;
+            color: #E380F0;
+            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
         }
-
-        header a {
-            color: var(--text-color);
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
+        .cell:active {
+            transform: scale(0.9); /* Shrinks slightly when clicked */
+            background-color: #4D4A57; /* Slightly darker shade on click */
         }
-
-        header #branding {
-            display: flex;
-            align-items: center;
-        }
-
-        header #branding img {
-            max-height: 100px;
-            margin-right: 10px;
-        }
-
-        header #branding h1 {
-            margin: 0;
-            font-size: 2.5em;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px var(--primary-color);
-        }
-
-        .main-content {
-            flex: 1;
+        .controls {
+            margin-top: 40px; /* Increased margin to move button further from squares */
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: 50px 0;
+            gap: 10px; /* Added space between controls */
+            align-items: center;
         }
-
-        .auth-form {
-            background: rgba(0, 0, 0, 0.7);
-            max-width: 400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--primary-color);
-        }
-
-        .auth-form h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--secondary-color);
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--secondary-color);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            border-radius: 5px;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
-            color: #000;
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
             border: none;
+            padding: 15px 50px; /* Adjusted padding for wider and slightly taller button */
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 20px; /* Increased font size for button text */
+            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
         }
-        
-        .submit-btn:hover {
-            background-color: var(--secondary-color);
+        button:active {
+            transform: scale(0.95); /* Shrinks slightly when clicked */
+            background-color: #D370D0; /* Slightly darker shade on click */
         }
-        
-        .toggle-form {
+        input[type="number"] {
+            background-color: #3D3B47;
+            color: #808EFF;
+            border: 2px solid #808EFF;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #E380F0;
+            text-decoration: none;
+        }
+        .winning-display {
+            font-size: 24px;
+            color: #E380F0;
             text-align: center;
-            color: var(--secondary-color);
-            cursor: pointer;
+            margin-top: 20px;
         }
-        
-        footer {
-            background-color: #000;
-            color: var(--text-color);
-            text-align: center;
-            padding: 20px;
-            width: 100%;
+        .balance-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #3D3B47;
+        }
+        .balance {
+            border: 2px solid #808EFF;
+            border-radius: 5px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            color: #E380F0;
+        }
+        .back-arrow {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #808EFF;
+            font-size: 28px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <a href="index.html">
-                    <img src="IMG_3867.png" alt="CDDC Logo">
-                </a>
-                <h1>CDDC</h1>
-            </div>
+    <div class="container">
+        <div class="balance-container">
+            <a href="individuals.html" class="back-arrow">←</a>
+            <div class="balance"><span id="balance">1000</span></div>
         </div>
-    </header>
-
-    <div class="main-content">
-        <div class="container">
-            <!-- Sign In Form -->
-            <form id="authForm" class="auth-form" onsubmit="return handleAuth(event)">
-                <h2 id="formTitle">Sign In</h2>
-                <div class="form-group">
-                    <label for="username">Username or Email</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
-                <p class="toggle-form" onclick="toggleForm()">
-                    <span id="toggleText">Don't have an account? Sign Up</span>
-                </p>
-            </form>
-
-            <!-- Sign Up Form -->
-            <form id="signUpForm" class="auth-form" style="display:none;" onsubmit="return handleAuth(event)">
-                <h2 id="signUpTitle">Sign Up</h2>
-                
-                <!-- Email Field -->
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-
-                <!-- Username Field -->
-                <div class="form-group">
-                    <label for="newUsername">Username</label>
-                    <input type="text" id="newUsername" name="newUsername" required>
-                </div>
-
-                <!-- Password Field -->
-                <div class="form-group">
-                    <label for="newPassword">Password (min. 6 characters)</label>
-                    <input type="password" id="newPassword" name="newPassword" required minlength="6">
-                </div>
-
-                <!-- Confirm Password Field -->
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn">Sign Up</button>
-
-                <!-- Toggle Form Link -->
-                <p class="toggle-form" onclick="toggleForm()">
-                    <span id="toggleTextSignUp">Already have an account? Sign In</span>
-                </p>
-            </form>
+        
+        <div class="controls">
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
+            <button id="game-button">Play</button>
         </div>
+        
+        <div class="game-board" id="game-board"></div>
+        
+        
+        
+        
+
+        
     </div>
 
-    <footer>
-        <p>&copy;2024 CDDC</p>
-    </footer>
-
     <script>
-        function toggleForm() {
-            const signInForm = document.getElementById('authForm');
-            const signUpForm = document.getElementById('signUpForm');
-            if (signInForm.style.display === "none") {
-                signInForm.style.display = "block";
-                signUpForm.style.display = "none";
+        const gameBoard = document.getElementById('game-board');
+        const gameButton = document.getElementById('game-button');
+        const betInput = document.getElementById('bet-amount');
+        const mineCountInput = document.getElementById('mine-count');
+        const balanceDisplay = document.getElementById('balance');
+        const multiplierDisplay = document.getElementById('multiplier');
+        const winningDisplay = document.getElementById('winning-display');
+        const currentBetDisplay = document.getElementById('current-bet-display');
+        
+        let mines = [];
+        let revealedCells = 0;
+        let gameActive = false;
+        let balance = 1000;
+        let currentBet = 0;
+        let currentMultiplier = 1;
+
+        function createBoard() {
+            gameBoard.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => revealCell(i));
+                gameBoard.appendChild(cell);
+            }
+        }
+
+        function startGame() {
+            currentBet = parseInt(betInput.value);
+            const mineCount = parseInt(mineCountInput.value);
+            
+            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
+                alert('Please enter a valid bet amount within your balance.');
+                return;
+            }
+            
+            if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
+                alert('Please enter a valid number of mines (1-24).');
+                return;
+            }
+            
+            balance -= currentBet;
+            updateBalance();
+            currentBetDisplay.textContent = currentBet;
+            
+            gameActive = true;
+            revealedCells = 0;
+            mines = [];
+            currentMultiplier = 1;
+            updateMultiplier();
+            
+            while (mines.length < mineCount) {
+                const mine = Math.floor(Math.random() * 25);
+                if (!mines.includes(mine)) {
+                    mines.push(mine);
+                }
+            }
+            
+            createBoard();
+            
+            gameButton.textContent = 'Cash Out';
+            winningDisplay.textContent = `Bet Amount: $${currentBet}`;
+        }
+
+        function cashOut() {
+            if (revealedCells > 0) {
+                const winnings = Math.floor(currentBet * currentMultiplier);
+                balance += winnings;
+                updateBalance();
+                winningDisplay.textContent = `Final Amount: $${winnings}`;
+                gameActive = false;
+                gameButton.textContent = 'Play Again';
+            }
+        }
+
+        function revealCell(index) {
+            if (!gameActive) return;
+
+            const cell = gameBoard.children[index];
+            if (cell.textContent) return;
+
+            if (mines.includes(index)) {
+                cell.textContent = '💣';
+                gameOver();
             } else {
-                signInForm.style.display = "none";
-                signUpForm.style.display = "block";
+                cell.textContent = '💎';
+                revealedCells++;
+                updateMultiplier();
+                updateDisplayedBet();
+                if (revealedCells === 25 - mines.length) {
+                    gameWon();
+                }
             }
         }
 
-        function handleAuth(event) {
-            event.preventDefault();
-            let usernameOrEmail, password;
+        function updateMultiplier() {
+            const mineCount = mines.length;
+            const safeSquares = 25 - mineCount;
+            currentMultiplier = (safeSquares / (safeSquares - revealedCells));
+            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        }
 
-            if (document.getElementById('authForm').style.display !== "none") { // Sign In
-                usernameOrEmail = document.getElementById('username').value;
-                password = document.getElementById('password').value;
+        function updateDisplayedBet() {
+            const updatedBet = Math.floor(currentBet * currentMultiplier);
+            winningDisplay.textContent = `Current Amount: $${updatedBet}`;
+        }
 
-                const userData = JSON.parse(localStorage.getItem(usernameOrEmail));
-                if (userData && userData.password === password) {
-                    // Save sign-in state to localStorage
-                    localStorage.setItem("isSignedIn", "true");
-                    alert("You are now signed in!");
-                    window.location.href = "individuals.html"; // Redirect to individuals.html
-                } else {
-                    alert("Invalid username/email or password.");
+        function gameOver() {
+            gameActive = false;
+            winningDisplay.textContent = 'Game Over! You hit a mine.';
+            revealAllMines();
+            gameButton.textContent = 'Play Again';
+        }
+
+        function revealAllMines() {
+            for (let i = 0; i < 25; i++) {
+                const cell = gameBoard.children[i];
+                if (mines.includes(i) && !cell.textContent) {
+                    cell.textContent = '💣';
                 }
-            } else { // Sign Up
-                const email = document.getElementById('email').value;
-                const newUsername = document.getElementById('newUsername').value;
-                password = document.getElementById('newPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-
-                if (localStorage.getItem(newUsername) || localStorage.getItem(email)) {
-                    alert("Username or email already exists. Please choose another.");
-                    return false;
-                }
-
-                if (password !== confirmPassword) {
-                    alert("Passwords do not match.");
-                    return false;
-                }
-
-                const userData = { email, password };
-                localStorage.setItem(newUsername, JSON.stringify(userData));
-                localStorage.setItem(email, JSON.stringify(userData));
-                alert("Account created successfully! Please sign in.");
-                toggleForm(); // Switch to sign in form
             }
         }
+
+        function gameWon() {
+            gameActive = false;
+            const winnings = Math.floor(currentBet * currentMultiplier);
+            balance += winnings;
+            updateBalance();
+            winningDisplay.textContent = `Final Amount: $${winnings}`;
+            gameButton.textContent = 'Play Again';
+        }
+
+        function resetGame() {
+            gameActive = false;
+            gameButton.textContent = 'Play';
+            betInput.value = '';
+            currentBet = 0;
+            currentMultiplier = 1;
+            updateMultiplier();
+            createBoard();
+        }
+
+        function updateBalance() {
+            balanceDisplay.textContent = balance;
+        }
+
+        gameButton.addEventListener('click', () => {
+            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
+                startGame();
+            } else if (gameButton.textContent === 'Cash Out') {
+                cashOut();
+            }
+        });
+        
+        createBoard();
+        updateBalance();
+        updateMultiplier();
     </script>
 </body>
 </html>

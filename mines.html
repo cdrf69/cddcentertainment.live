@@ -156,7 +156,7 @@
             
             balance -= currentBet;
             updateBalance();
-            currentBetDisplay.textContent = currentBet.toFixed(2);
+            currentBetDisplay.textContent = currentBet;
             
             gameActive = true;
             revealedCells = 0;
@@ -174,7 +174,7 @@
             createBoard();
             
             gameButton.textContent = 'Cash Out';
-            winningDisplay.textContent = `Bet Amount: $${currentBet.toFixed(2)}`;
+            winningDisplay.textContent = `Bet Amount: $${currentBet}`;
         }
 
         function cashOut() {
@@ -182,7 +182,7 @@
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
-                winningDisplay.textContent = `Final Amount: $${winnings.toFixed(2)}`;
+                winningDisplay.textContent = `Final Amount: $${winnings}`;
                 resetGame();
             }
         }
@@ -210,12 +210,12 @@
         function updateMultiplier() {
             const mineCount = mines.length;
             const safeSquares = 25 - mineCount;
-            currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
-            multiplierDisplay.textContent = currentMultiplier + 'x';
+            currentMultiplier = (safeSquares / (safeSquares - revealedCells));
+            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
         }
 
         function updateDisplayedBet() {
-            const updatedBet = (currentBet * currentMultiplier).toFixed(2);
+            const updatedBet = Math.floor(currentBet * currentMultiplier);
             winningDisplay.textContent = `Current Amount: $${updatedBet}`;
         }
 
@@ -230,7 +230,7 @@
             const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
-            winningDisplay.textContent = `Final Amount: $${winnings.toFixed(2)}`;
+            winningDisplay.textContent = `Final Amount: $${winnings}`;
             resetGame();
         }
 

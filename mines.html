@@ -13,8 +13,8 @@
             background-color: #2F2D37;
             color: #808EFF;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start; /* Keep X-axis alignment */
+            align-items: center; /* Center Y-axis */
             height: 100vh;
         }
         .container {
@@ -32,9 +32,9 @@
             grid-template-columns: repeat(5, 60px); /* Fixed column width for tighter spacing */
             gap: 2px; /* Reduced gap for closer spacing */
             margin-top: 20px;
-            border: 2px solid #808EFF; /* Reduced border size */
-            padding: 2px; /* Reduced padding to match border size */
+            border: 2px solid #808EFF; /* Adjusted to fit the board size */
             border-radius: 8px; /* Rounded border corners */
+            width: max-content; /* Shrink border to fit content */
         }
         .cell {
             width: 60px;

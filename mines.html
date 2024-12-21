@@ -14,7 +14,7 @@
             color: #808EFF;
             display: flex;
             justify-content: center; /* Center horizontally */
-            align-items: flex-start; /* Align to the top initially */
+            align-items: center; /* Center vertically */
             height: 100vh;
         }
         .container {
@@ -22,9 +22,6 @@
             margin: auto;
             overflow: hidden;
             padding: 20px;
-            position: absolute;
-            top: 50%; /* Align center on Y-axis */
-            transform: translateY(-50%); /* Adjust for height */
         }
         h1, h2 {
             color: #E380F0;
@@ -34,7 +31,7 @@
             display: grid;
             grid-template-columns: repeat(5, 60px); /* Fixed column width for tighter spacing */
             gap: 2px; /* Reduced gap for closer spacing */
-            margin-top: 20px;
+            margin: 0 auto; /* Center the game board */
             border: 3px solid #808EFF; /* Properly sized border */
             border-radius: 8px; /* Rounded border corners */
             padding: 10px; /* Padding to create space inside the border */

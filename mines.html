@@ -94,8 +94,7 @@
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
             <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
-            <button id="start-game">Start Game</button>
-            <button id="cash-out" disabled>Cash Out</button>
+            <button id="game-button">Start Game</button>
         </div>
         
         <div class="game-board" id="game-board"></div>
@@ -107,8 +106,7 @@
 
     <script>
         const gameBoard = document.getElementById('game-board');
-        const startButton = document.getElementById('start-game');
-        const cashOutButton = document.getElementById('cash-out');
+        const gameButton = document.getElementById('game-button');
         const betInput = document.getElementById('bet-amount');
         const mineCountInput = document.getElementById('mine-count');
         const balanceDisplay = document.getElementById('balance');
@@ -164,8 +162,17 @@
             
             createBoard();
             
-            startButton.disabled = true;
-            cashOutButton.disabled = false;
+            gameButton.textContent = 'Cash Out';
+        }
+
+        function cashOut() {
+            if (revealedCells > 0) {
+                const winnings = Math.floor(currentBet * currentMultiplier);
+                balance += winnings;
+                updateBalance();
+                alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
+                resetGame();
+            }
         }
 
         function revealCell(index) {
@@ -209,19 +216,9 @@
             resetGame();
         }
 
-        function cashOut() {
-            if (revealedCells > 0) {
-                const winnings = Math.floor(currentBet * currentMultiplier);
-                balance += winnings;
-                updateBalance();
-                alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
-                resetGame();
-            }
-        }
-
         function resetGame() {
-            startButton.disabled = false;
-            cashOutButton.disabled = true;
+            gameActive = false;
+            gameButton.textContent = 'Start Game';
             betInput.value = '';
             currentBet = 0;
             currentMultiplier = 1;
@@ -233,8 +230,13 @@
             balanceDisplay.textContent = balance;
         }
 
-        startButton.addEventListener('click', startGame);
-        cashOutButton.addEventListener('click', cashOut);
+        gameButton.addEventListener('click', () => {
+            if (gameActive) {
+                cashOut();
+            } else {
+                startGame();
+            }
+        });
         
         createBoard();
         updateBalance();

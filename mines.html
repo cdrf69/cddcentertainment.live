@@ -68,6 +68,11 @@
             cursor: pointer;
             font-family: 'Courier New', monospace;
             font-weight: bold;
+            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
+        }
+        button:active {
+            transform: scale(0.95); /* Shrinks slightly when clicked */
+            background-color: #D370D0; /* Slightly darker shade on click */
         }
         input[type="number"] {
             background-color: #3D3B47;

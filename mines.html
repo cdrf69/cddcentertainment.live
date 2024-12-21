@@ -173,7 +173,7 @@
             
             createBoard();
             
-            gameButton.textContent = 'Play Again';
+            gameButton.textContent = 'Cash Out';
             winningDisplay.textContent = `Bet Amount: $${currentBet}`;
         }
 
@@ -184,6 +184,7 @@
                 updateBalance();
                 winningDisplay.textContent = `Final Amount: $${winnings}`;
                 gameActive = false;
+                gameButton.textContent = 'Play Again';
             }
         }
 
@@ -223,6 +224,7 @@
             gameActive = false;
             winningDisplay.textContent = 'Game Over! You hit a mine.';
             revealAllMines();
+            gameButton.textContent = 'Play Again';
         }
 
         function revealAllMines() {
@@ -240,6 +242,7 @@
             balance += winnings;
             updateBalance();
             winningDisplay.textContent = `Final Amount: $${winnings}`;
+            gameButton.textContent = 'Play Again';
         }
 
         function resetGame() {
@@ -257,10 +260,10 @@
         }
 
         gameButton.addEventListener('click', () => {
-            if (gameActive) {
-                cashOut();
-            } else {
+            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
                 startGame();
+            } else if (gameButton.textContent === 'Cash Out') {
+                cashOut();
             }
         });
         

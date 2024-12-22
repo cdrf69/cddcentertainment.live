@@ -102,6 +102,7 @@
             50% {
                 transform: scale(1.5);
                 background-color: red;
+                color: yellow;
             }
             100% {
                 transform: scale(0);
@@ -163,12 +164,12 @@
             const mineCount = parseInt(mineCountInput.value);
 
             if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
-                alert('Please enter a valid bet amount within your balance.');
+                console.log('Invalid bet amount.');
                 return;
             }
 
             if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
-                alert('Please enter a valid number of mines (1-24).');
+                console.log('Invalid number of mines.');
                 return;
             }
 
@@ -200,7 +201,7 @@
                 balance += winnings;
                 updateBalance();
                 revealAllMines();
-                alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
+                console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
                 resetGame();
             }
         }
@@ -248,7 +249,8 @@
 
         function gameOver() {
             gameActive = false;
-            alert('Game Over! You hit a mine.');
+            revealAllMines();
+            console.log('Game Over! You hit a mine.');
             resetGame();
         }
 
@@ -257,7 +259,7 @@
             const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
-            alert(`Congratulations! You won $${winnings}!`);
+            console.log(`Congratulations! You won $${winnings}!`);
             resetGame();
         }
 

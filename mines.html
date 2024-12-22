@@ -202,7 +202,7 @@
                 updateBalance();
                 revealAllMines();
                 console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
-                resetGame();
+                setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
             }
         }
 
@@ -251,7 +251,7 @@
             gameActive = false;
             revealAllMines();
             console.log('Game Over! You hit a mine.');
-            resetGame();
+            setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
         }
 
         function gameWon() {
@@ -260,7 +260,7 @@
             balance += winnings;
             updateBalance();
             console.log(`Congratulations! You won $${winnings}!`);
-            resetGame();
+            setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
         }
 
         function resetGame() {

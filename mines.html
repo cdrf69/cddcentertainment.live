@@ -132,7 +132,7 @@
             <button id="game-button">Play</button>
         </div>
         <div class="game-board" id="game-board"></div>
-        <h2>Bet Amount: $<span id="current-bet-display">0</span></h2>
+        <h2>$<span id="current-bet-display">0</span></h2>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
 
@@ -201,7 +201,7 @@
 
         function cashOut() {
             if (revealedCells > 0) {
-                const winnings = Math.floor(currentBet * currentMultiplier);
+                const winnings = Math.floor(currentBet);
                 balance += winnings;
                 updateBalance();
                 revealAllCells();
@@ -238,10 +238,10 @@
             }
             multiplierDisplay.textContent = `${currentMultiplier}x`;
 
-            // Increment balance based on multiplier
+            // Increment bet amount dynamically
             if (revealedCells > 0 && gameActive) {
-                balance += Math.floor(currentBet * (currentMultiplier - 1));
-                updateBalance();
+                currentBet = Math.floor(betInput.value * currentMultiplier);
+                currentBetDisplay.textContent = currentBet;
             }
         }
 

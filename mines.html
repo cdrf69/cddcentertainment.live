@@ -116,6 +116,10 @@
             background-color: red;
             color: yellow;
         }
+        .gem {
+            background-color: #3D3B47;
+            color: #E380F0;
+        }
     </style>
 </head>
 <body>
@@ -200,7 +204,7 @@
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
-                revealAllMines();
+                revealAllCells();
                 console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
                 setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
             }
@@ -221,6 +225,7 @@
             } else {
                 cell.textContent = '💎';
                 revealedCells++;
+                cell.classList.add('gem');
                 updateMultiplier();
                 if (revealedCells === 25 - mines.length) {
                     gameWon();
@@ -228,12 +233,15 @@
             }
         }
 
-        function revealAllMines() {
+        function revealAllCells() {
             for (let i = 0; i < 25; i++) {
+                const cell = gameBoard.children[i];
                 if (mines.includes(i)) {
-                    const cell = gameBoard.children[i];
                     cell.textContent = '💣';
                     cell.classList.add('mine');
+                } else {
+                    cell.textContent = '💎';
+                    cell.classList.add('gem');
                 }
             }
         }
@@ -249,9 +257,9 @@
 
         function gameOver() {
             gameActive = false;
-            revealAllMines();
+            revealAllCells();
             console.log('Game Over! You hit a mine.');
-            setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
+            setTimeout(resetGame, 2000); // Allow viewing cells for 2 seconds
         }
 
         function gameWon() {
@@ -260,7 +268,7 @@
             balance += winnings;
             updateBalance();
             console.log(`Congratulations! You won $${winnings}!`);
-            setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
+            setTimeout(resetGame, 2000); // Allow viewing cells for 2 seconds
         }
 
         function resetGame() {

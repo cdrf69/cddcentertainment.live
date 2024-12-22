@@ -95,6 +95,26 @@
             font-size: 18px;
             color: #E380F0;
         }
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.5);
+                background-color: red;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+        .exploding {
+            animation: explode 0.5s forwards;
+        }
+        .mine {
+            background-color: red;
+            color: yellow;
+        }
     </style>
 </head>
 <body>
@@ -179,6 +199,7 @@
                 const winnings = Math.floor(currentBet * currentMultiplier);
                 balance += winnings;
                 updateBalance();
+                revealAllMines();
                 alert(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
                 resetGame();
             }
@@ -192,6 +213,7 @@
 
             if (mines.includes(index)) {
                 cell.textContent = '💣';
+                cell.classList.add('exploding');
                 currentMultiplier = 0; // Set multiplier to 0 when a mine is clicked
                 updateMultiplier();
                 gameOver();
@@ -201,6 +223,16 @@
                 updateMultiplier();
                 if (revealedCells === 25 - mines.length) {
                     gameWon();
+                }
+            }
+        }
+
+        function revealAllMines() {
+            for (let i = 0; i < 25; i++) {
+                if (mines.includes(i)) {
+                    const cell = gameBoard.children[i];
+                    cell.textContent = '💣';
+                    cell.classList.add('mine');
                 }
             }
         }

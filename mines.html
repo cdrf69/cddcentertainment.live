@@ -192,6 +192,8 @@
 
             if (mines.includes(index)) {
                 cell.textContent = '💣';
+                currentMultiplier = 0; // Set multiplier to 0 when a mine is clicked
+                updateMultiplier();
                 gameOver();
             } else {
                 cell.textContent = '💎';
@@ -206,7 +208,9 @@
         function updateMultiplier() {
             const mineCount = mines.length;
             const safeSquares = 25 - mineCount;
-            currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
+            if (currentMultiplier !== 0) {
+                currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
+            }
             multiplierDisplay.textContent = `${currentMultiplier}x`;
         }
 

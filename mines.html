@@ -206,7 +206,7 @@
                 updateBalance();
                 revealAllCells();
                 console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
-                setTimeout(resetGame, 2000); // Allow viewing mines for 2 seconds
+                gameButton.textContent = 'Play Again'; // Change button text
             }
         }
 
@@ -259,7 +259,7 @@
             gameActive = false;
             revealAllCells();
             console.log('Game Over! You hit a mine.');
-            setTimeout(resetGame, 2000); // Allow viewing cells for 2 seconds
+            gameButton.textContent = 'Play Again'; // Change button text
         }
 
         function gameWon() {
@@ -268,7 +268,7 @@
             balance += winnings;
             updateBalance();
             console.log(`Congratulations! You won $${winnings}!`);
-            setTimeout(resetGame, 2000); // Allow viewing cells for 2 seconds
+            gameButton.textContent = 'Play Again'; // Change button text
         }
 
         function resetGame() {
@@ -286,7 +286,7 @@
         }
 
         gameButton.addEventListener('click', () => {
-            if (gameButton.textContent === 'Play') {
+            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
                 startGame();
             } else {
                 cashOut();

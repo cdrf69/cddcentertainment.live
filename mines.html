@@ -27,6 +27,19 @@
             color: #E380F0;
             text-align: center;
         }
+        .multiplier-display {
+            font-size: 3em;
+            margin-top: -20px;
+            margin-bottom: 10px;
+            color: #E380F0;
+            text-align: center;
+        }
+        .bet-display {
+            font-size: 1.5em;
+            color: #808EFF;
+            text-align: center;
+            margin-bottom: 20px;
+        }
         .game-board {
             display: grid;
             grid-template-columns: repeat(5, 60px);
@@ -125,14 +138,14 @@
 <body>
     <div class="container">
         <div class="balance-display">Balance: <span id="balance">1000</span></div>
-        <h2><span id="multiplier">1.00x</span></h2>
+        <div class="multiplier-display"><span id="multiplier">1.00x</span></div>
+        <div class="bet-display">$<span id="current-bet-display">0</span></div>
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="" min="1">
             <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
             <button id="game-button">Play</button>
         </div>
         <div class="game-board" id="game-board"></div>
-        <h2>$<span id="current-bet-display">0</span></h2>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
 

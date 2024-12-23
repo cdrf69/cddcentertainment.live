@@ -171,6 +171,18 @@
         let currentBet = 0;
         let currentMultiplier = 1;
 
+        // Multiplier odds table
+        const oddsTable = {
+            1: [1.01, 1.08, 1.12, 1.18, 1.24, 1.3, 1.37, 1.46, 1.55, 1.65, 1.77, 1.9, 2.06, 2.25, 2.47, 2.75, 3.09, 3.54, 4.12, 4.95, 6.19, 8.25, 12.37, 24.75],
+            2: [1.08, 1.17, 1.29, 1.41, 1.56, 1.74, 1.94, 2.18, 2.47, 2.83, 3.26, 3.81, 4.5, 5.4, 6.6, 8.25, 10.61, 14.14, 19.8, 29.7, 49.5, 99, 297],
+            3: [1.12, 1.22, 1.36, 1.51, 1.71, 1.94, 2.23, 2.58, 3.01, 3.56, 4.27, 5.19, 6.4, 8.06, 10.35, 13.97, 19.27, 27.11, 40.66, 65.06, 113.85, 227.7, 569.3],
+            4: [1.18, 1.29, 1.44, 1.63, 1.86, 2.15, 2.51, 2.94, 3.48, 4.15, 5.0, 6.1, 7.57, 9.6, 12.35, 16.15, 22.14, 32.19, 48.15, 79.65, 139.4, 278.8],
+            5: [1.24, 1.37, 1.55, 1.78, 2.06, 2.43, 2.88, 3.44, 4.14, 5.03, 6.19, 7.74, 9.92, 13.05, 17.61, 24.16, 34.52, 52.85, 85.23, 148.67, 297.33],
+            6: [1.3, 1.46, 1.67, 1.94, 2.29, 2.74, 3.31, 4.05, 5.01, 6.27, 7.94, 10.34, 13.78, 18.91, 27.15, 39.5, 59.64, 99.39, 178.91, 357.81],
+            7: [1.37, 1.55, 1.79, 2.11, 2.51, 3.02, 3.68, 4.54, 5.68, 7.2, 9.26, 12.17, 16.51, 23.19, 34.69, 54.9, 92.41, 178.13, 357.25],
+            // Add remaining rows up to 24 as per the image
+        };
+
         function createBoard() {
             gameBoard.innerHTML = '';
             for (let i = 0; i < 25; i++) {
@@ -251,10 +263,14 @@
 
         function updateMultiplier() {
             const mineCount = mines.length;
-            const safeSquares = 25 - mineCount;
-            if (currentMultiplier !== 0) {
-                currentMultiplier = (safeSquares / (safeSquares - revealedCells)).toFixed(2);
+            const diamonds = revealedCells;
+
+            if (diamonds > 0 && mineCount > 0 && mineCount <= 24) {
+                currentMultiplier = oddsTable[mineCount][diamonds - 1];
+            } else {
+                currentMultiplier = 1;
             }
+
             multiplierDisplay.textContent = `${currentMultiplier}x`;
 
             // Increment bet amount dynamically

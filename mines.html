@@ -38,14 +38,18 @@
             display: block;
             position: absolute;
             width: 100%;
+            top: 0;
+            left: 0;
             transform: translateY(100%);
             transition: transform 0.3s ease-in-out;
         }
         .flipping-number span.current {
             transform: translateY(0);
+            z-index: 1;
         }
         .flipping-number span.next {
             transform: translateY(-100%);
+            z-index: 2;
         }
         .multiplier-display {
             font-size: 3em;
@@ -200,14 +204,16 @@
             element.appendChild(next);
 
             setTimeout(() => {
-                current.classList.add('next');
-                current.classList.remove('current');
+                current.style.transition = 'transform 0.3s';
+                next.style.transition = 'transform 0.3s';
 
-                next.classList.add('current');
-                next.classList.remove('next');
+                current.style.transform = 'translateY(-100%)';
+                next.style.transform = 'translateY(0)';
 
                 setTimeout(() => {
                     current.remove();
+                    next.classList.add('current');
+                    next.classList.remove('next');
                 }, 300);
             }, 50);
         }

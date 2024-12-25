@@ -29,23 +29,23 @@
         }
         .flipping-number {
             display: inline-block;
-            perspective: 1000px;
+            overflow: hidden;
+            height: 1.2em;
+            line-height: 1.2em;
+            position: relative;
         }
-        .flip {
-            display: inline-block;
-            transform-style: preserve-3d;
-            animation: flip 0.5s ease;
+        .flipping-number span {
+            display: block;
+            position: absolute;
+            width: 100%;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
         }
-        @keyframes flip {
-            0% {
-                transform: rotateX(0);
-            }
-            50% {
-                transform: rotateX(90deg);
-            }
-            100% {
-                transform: rotateX(0);
-            }
+        .flipping-number span.current {
+            transform: translateY(0);
+        }
+        .flipping-number span.next {
+            transform: translateY(-100%);
         }
         .multiplier-display {
             font-size: 3em;
@@ -163,9 +163,9 @@
 </head>
 <body>
     <div class="container">
-        <div class="balance-display">Balance: <span id="balance" class="flipping-number">1000</span></div>
-        <div class="multiplier-display"><span id="multiplier" class="flipping-number">1.00x</span></div>
-        <div class="bet-display">$<span id="current-bet-display" class="flipping-number">0</span></div>
+        <div class="balance-display">Balance: <span id="balance" class="flipping-number"><span class="current">1000</span></span></div>
+        <div class="multiplier-display"><span id="multiplier" class="flipping-number"><span class="current">1.00x</span></span></div>
+        <div class="bet-display">$<span id="current-bet-display" class="flipping-number"><span class="current">0</span></span></div>
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="" min="1">
             <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
@@ -191,13 +191,25 @@
         let currentMultiplier = 1;
 
         function updateFlippingNumber(element, value) {
-            const span = document.createElement('span');
-            span.textContent = value;
-            span.classList.add('flip');
+            const current = element.querySelector('.current');
+            const next = document.createElement('span');
 
-            // Clear previous content and append the animated value
-            element.innerHTML = '';
-            element.appendChild(span);
+            next.textContent = value;
+            next.classList.add('next');
+
+            element.appendChild(next);
+
+            setTimeout(() => {
+                current.classList.add('next');
+                current.classList.remove('current');
+
+                next.classList.add('current');
+                next.classList.remove('next');
+
+                setTimeout(() => {
+                    current.remove();
+                }, 300);
+            }, 50);
         }
 
         function createBoard() {

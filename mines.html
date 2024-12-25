@@ -154,7 +154,7 @@
         <div class="game-board" id="game-board"></div>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
-   <script>
+  <script>
     const gameBoard = document.getElementById('game-board');
     const gameButton = document.getElementById('game-button');
     const betInput = document.getElementById('bet-amount');
@@ -219,7 +219,7 @@
 
     function cashOut() {
         if (revealedCells > 0) {
-            const winnings = Math.floor(currentBet);
+            const winnings = Math.floor(currentBet * currentMultiplier);
             balance += winnings;
             updateBalance();
             revealAllCells();

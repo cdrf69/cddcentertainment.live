@@ -214,6 +214,10 @@
 
         createBoard();
 
+        // Disable inputs
+        betInput.disabled = true;
+        mineCountInput.disabled = true;
+
         gameButton.textContent = 'Cash Out';
     }
 
@@ -288,6 +292,10 @@
         revealAllCells();
         console.log('Game Over! You hit a mine.');
         gameButton.textContent = 'Play Again';
+
+        // Re-enable inputs when the game ends
+        betInput.disabled = false;
+        mineCountInput.disabled = false;
     }
 
     gameButton.addEventListener('click', () => {

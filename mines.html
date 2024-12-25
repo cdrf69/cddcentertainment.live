@@ -229,6 +229,10 @@
             revealAllCells();
             console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
             gameButton.textContent = 'Play Again';
+
+            // Re-enable inputs when cashing out
+            betInput.disabled = false;
+            mineCountInput.disabled = false;
         }
     }
 

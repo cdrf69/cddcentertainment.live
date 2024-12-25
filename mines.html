@@ -27,30 +27,6 @@
             color: #E380F0;
             text-align: center;
         }
-        .flipping-number {
-            display: inline-block;
-            overflow: hidden;
-            height: 1.2em;
-            line-height: 1.2em;
-            position: relative;
-        }
-        .flipping-number span {
-            display: block;
-            position: absolute;
-            width: 100%;
-            top: 0;
-            left: 0;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
-        }
-        .flipping-number span.current {
-            transform: translateY(0);
-            z-index: 1;
-        }
-        .flipping-number span.next {
-            transform: translateY(-100%);
-            z-index: 2;
-        }
         .multiplier-display {
             font-size: 3em;
             margin-top: -20px;
@@ -167,9 +143,9 @@
 </head>
 <body>
     <div class="container">
-        <div class="balance-display">Balance: <span id="balance" class="flipping-number"><span class="current">1000</span></span></div>
-        <div class="multiplier-display"><span id="multiplier" class="flipping-number"><span class="current">1.00x</span></span></div>
-        <div class="bet-display">$<span id="current-bet-display" class="flipping-number"><span class="current">0</span></span></div>
+        <div class="balance-display">Balance: <span id="balance">1000</span></div>
+        <div class="multiplier-display"><span id="multiplier">1.00x</span></div>
+        <div class="bet-display">$<span id="current-bet-display">0</span></div>
         <div class="controls">
             <input type="number" id="bet-amount" placeholder="" min="1">
             <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
@@ -178,176 +154,152 @@
         <div class="game-board" id="game-board"></div>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
-    <script>
-        const gameBoard = document.getElementById('game-board');
-        const gameButton = document.getElementById('game-button');
-        const betInput = document.getElementById('bet-amount');
-        const mineCountInput = document.getElementById('mine-count');
-        const balanceDisplay = document.getElementById('balance');
-        const multiplierDisplay = document.getElementById('multiplier');
-        const currentBetDisplay = document.getElementById('current-bet-display');
+  <script>
+    const gameBoard = document.getElementById('game-board');
+    const gameButton = document.getElementById('game-button');
+    const betInput = document.getElementById('bet-amount');
+    const mineCountInput = document.getElementById('mine-count');
+    const balanceDisplay = document.getElementById('balance');
+    const multiplierDisplay = document.getElementById('multiplier');
+    const currentBetDisplay = document.getElementById('current-bet-display');
 
-        let mines = [];
-        let revealedCells = 0;
-        let gameActive = false;
-        let balance = 1000;
-        let currentBet = 0;
-        let currentMultiplier = 1;
+    let mines = [];
+    let revealedCells = 0;
+    let gameActive = false;
+    let balance = 1000;
+    let currentBet = 0;
+    let currentMultiplier = 1;
 
-        function updateFlippingNumber(element, value) {
-            const current = element.querySelector('.current');
-            const next = document.createElement('span');
+    function createBoard() {
+        gameBoard.innerHTML = '';
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => revealCell(i));
+            gameBoard.appendChild(cell);
+        }
+    }
 
-            next.textContent = value;
-            next.classList.add('next');
+    function startGame() {
+        currentBet = parseInt(betInput.value);
+        const mineCount = parseInt(mineCountInput.value);
 
-            element.appendChild(next);
-
-            setTimeout(() => {
-                current.style.transition = 'transform 0.3s';
-                next.style.transition = 'transform 0.3s';
-
-                current.style.transform = 'translateY(-100%)';
-                next.style.transform = 'translateY(0)';
-
-                setTimeout(() => {
-                    current.remove();
-                    next.classList.add('current');
-                    next.classList.remove('next');
-                }, 300);
-            }, 50);
+        if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
+            console.log('Invalid bet amount.');
+            return;
         }
 
-        function createBoard() {
-            gameBoard.innerHTML = '';
-            for (let i = 0; i < 25; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                cell.dataset.index = i;
-                cell.addEventListener('click', () => revealCell(i));
-                gameBoard.appendChild(cell);
-            }
+        if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
+            console.log('Invalid number of mines.');
+            return;
         }
 
-        function startGame() {
-            currentBet = parseInt(betInput.value);
-            const mineCount = parseInt(mineCountInput.value);
+        balance -= currentBet;
+        updateBalance();
+        currentBetDisplay.textContent = currentBet;
 
-            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
-                console.log('Invalid bet amount.');
-                return;
-            }
+        gameActive = true;
+        revealedCells = 0;
+        mines = [];
+        currentMultiplier = 1;
+        updateMultiplier();
 
-            if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
-                console.log('Invalid number of mines.');
-                return;
-            }
-
-            balance -= currentBet;
-            updateFlippingNumber(balanceDisplay, balance);
-            updateFlippingNumber(currentBetDisplay, currentBet);
-
-            gameActive = true;
-            revealedCells = 0;
-            mines = [];
-            currentMultiplier = 1;
-            updateMultiplier();
-
-            while (mines.length < mineCount) {
-                const mine = Math.floor(Math.random() * 25);
-                if (!mines.includes(mine)) {
-                    mines.push(mine);
-                }
-            }
-
-            createBoard();
-
-            gameButton.textContent = 'Cash Out';
-        }
-
-        function cashOut() {
-            if (revealedCells > 0) {
-                const winnings = Math.floor(currentBet * currentMultiplier);
-                balance += winnings;
-                updateFlippingNumber(balanceDisplay, balance);
-                revealAllCells();
-                console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
-                gameButton.textContent = 'Play Again';
+        while (mines.length < mineCount) {
+            const mine = Math.floor(Math.random() * 25);
+            if (!mines.includes(mine)) {
+                mines.push(mine);
             }
         }
-
-        function revealCell(index) {
-            if (!gameActive) return;
-
-            const cell = gameBoard.children[index];
-            if (cell.textContent) return;
-
-            if (mines.includes(index)) {
-                cell.textContent = '💣';
-                cell.classList.add('exploding');
-                gameOver(); // End the game immediately when a mine is hit
-            } else {
-                cell.textContent = '💎';
-                revealedCells++;
-                cell.classList.add('gem');
-                updateMultiplier(); // Update the multiplier only when a gem is revealed
-            }
-        }
-
-        function updateMultiplier() {
-            const mineCount = mines.length; // Number of mines on the board
-            const diamonds = revealedCells; // Number of gems revealed
-
-            if (diamonds > 0 && mineCount > 0 && mineCount <= 24) {
-                // Multiplier calculation based on revealed gems and mine count
-                currentMultiplier = 1 + (diamonds * (mineCount / (25 - mineCount)));
-            } else {
-                currentMultiplier = 1; // Reset to 1 in invalid states
-            }
-
-            updateFlippingNumber(multiplierDisplay, `${currentMultiplier.toFixed(2)}x`);
-
-            // Calculate potential winnings dynamically based on multiplier
-            if (revealedCells > 0 && gameActive) {
-                const potentialWinnings = Math.floor(currentBet * currentMultiplier);
-                updateFlippingNumber(currentBetDisplay, potentialWinnings);
-            }
-        }
-
-        function updateBalance() {
-            updateFlippingNumber(balanceDisplay, balance);
-        }
-
-        function revealAllCells() {
-            for (let i = 0; i < 25; i++) {
-                const cell = gameBoard.children[i];
-                if (mines.includes(i)) {
-                    cell.textContent = '💣';
-                    cell.classList.add('mine');
-                } else {
-                    cell.textContent = '💎';
-                    cell.classList.add('gem');
-                }
-            }
-        }
-
-        function gameOver() {
-            gameActive = false;
-            revealAllCells();
-            console.log('Game Over! You hit a mine.');
-            gameButton.textContent = 'Play Again';
-        }
-
-        gameButton.addEventListener('click', () => {
-            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
-                startGame();
-            } else {
-                cashOut();
-            }
-        });
 
         createBoard();
-        updateBalance();
-    </script>
+
+        gameButton.textContent = 'Cash Out';
+    }
+
+    function cashOut() {
+        if (revealedCells > 0) {
+            const winnings = Math.floor(currentBet * currentMultiplier);
+            balance += winnings;
+            updateBalance();
+            revealAllCells();
+            console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
+            gameButton.textContent = 'Play Again';
+        }
+    }
+
+    function revealCell(index) {
+        if (!gameActive) return;
+
+        const cell = gameBoard.children[index];
+        if (cell.textContent) return;
+
+        if (mines.includes(index)) {
+            cell.textContent = '💣';
+            cell.classList.add('exploding');
+            gameOver(); // End the game immediately when a mine is hit
+        } else {
+            cell.textContent = '💎';
+            revealedCells++;
+            cell.classList.add('gem');
+            updateMultiplier(); // Update the multiplier only when a gem is revealed
+        }
+    }
+
+    function updateMultiplier() {
+        const mineCount = mines.length; // Number of mines on the board
+        const diamonds = revealedCells; // Number of gems revealed
+
+        if (diamonds > 0 && mineCount > 0 && mineCount <= 24) {
+            // Multiplier calculation based on revealed gems and mine count
+            currentMultiplier = 1 + (diamonds * (mineCount / (25 - mineCount)));
+        } else {
+            currentMultiplier = 1; // Reset to 1 in invalid states
+        }
+
+        multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+
+        // Calculate potential winnings dynamically based on multiplier
+        if (revealedCells > 0 && gameActive) {
+            const potentialWinnings = Math.floor(currentBet * currentMultiplier);
+            currentBetDisplay.textContent = potentialWinnings;
+        }
+    }
+
+    function updateBalance() {
+        balanceDisplay.textContent = balance;
+    }
+
+    function revealAllCells() {
+        for (let i = 0; i < 25; i++) {
+            const cell = gameBoard.children[i];
+            if (mines.includes(i)) {
+                cell.textContent = '💣';
+                cell.classList.add('mine');
+            } else {
+                cell.textContent = '💎';
+                cell.classList.add('gem');
+            }
+        }
+    }
+
+    function gameOver() {
+        gameActive = false;
+        revealAllCells();
+        console.log('Game Over! You hit a mine.');
+        gameButton.textContent = 'Play Again';
+    }
+
+    gameButton.addEventListener('click', () => {
+        if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
+            startGame();
+        } else {
+            cashOut();
+        }
+    });
+
+    createBoard();
+    updateBalance();
+</script>
 </body>
 </html>

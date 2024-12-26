@@ -3,304 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mines - CDDC</title>
+    <title>CDDC</title>
     <style>
+        /* Updated Cyberpunk theme with softer colors */
+        :root {
+            --primary-color: #E380F0;
+            --secondary-color: #808EFF;
+            --background-color: #2F2D37;
+            --text-color: #808EFF;
+        }
         body {
             font-family: 'Courier New', monospace;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #2F2D37;
-            color: #808EFF;
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-            height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
+
         .container {
-            width: fit-content;
+            width: 80%;
             margin: auto;
             overflow: hidden;
-            padding: 20px;
         }
-        h1, h2 {
-            color: #E380F0;
-            text-align: center;
-        }
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 60px); /* Fixed column width */
-            gap: 8px; /* Adjusted gap for equal spacing */
-            margin: 0 auto; /* Center the game board */
-            width: fit-content;
-            height: fit-content; /* Ensures proper layout */
-        }
-        .cell {
-            width: 60px;
-            height: 60px;
-            background-color: #3D3B47;
-            border-radius: 5px;
-            cursor: pointer;
+
+        header {
+            background: #000;
+            padding: 10px 20px;
+            min-height: 70px;
+            border-bottom: var(--primary-color) 2px solid;
+            border-radius: 10px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 24px;
-            color: #E380F0;
-            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
+            justify-content: space-between;
+            position: relative;
+            z-index: 1000;
         }
-        .cell:active {
-            transform: scale(0.9); /* Shrinks slightly when clicked */
-            background-color: #4D4A57; /* Slightly darker shade on click */
-        }
-        .controls {
-            margin-top: 40px; /* Increased margin to move button further from squares */
-            display: flex;
-            flex-direction: column;
-            gap: 10px; /* Added space between controls */
-            align-items: center;
-        }
-        button {
-            background-color: #E380F0;
-            color: #2F2D37;
-            border: none;
-            padding: 15px 50px; /* Adjusted padding for wider and slightly taller button */
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 20px; /* Increased font size for button text */
-            transition: transform 0.1s ease, background-color 0.1s ease; /* Added transition for click animation */
-        }
-        button:active {
-            transform: scale(0.95); /* Shrinks slightly when clicked */
-            background-color: #D370D0; /* Slightly darker shade on click */
-        }
-        input[type="number"] {
-            background-color: #3D3B47;
-            color: #808EFF;
-            border: 2px solid #808EFF;
-            padding: 5px;
-            border-radius: 5px;
-            width: 100px;
-        }
-        .back-link {
-            display: block;
-            margin-top: 20px;
-            color: #E380F0;
+
+        header a {
+            color: var(--text-color);
             text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
         }
-        .winning-display {
-            font-size: 24px;
-            color: #E380F0;
-            text-align: center;
-            margin-top: 20px;
+
+        header ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
         }
-        .balance-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
+
+        header li {
+            padding: 10px;
+        }
+
+        header #branding {
             display: flex;
             align-items: center;
-            background-color: #3D3B47;
         }
-        .balance {
-            border: 2px solid #808EFF;
-            border-radius: 5px;
-            padding: 5px 10px;
-            display: flex;
-            align-items: center;
-            font-size: 18px;
-            color: #E380F0;
-        }
-        .back-arrow {
+
+        header #branding img {
+            max-height: 70px;
             margin-right: 10px;
+        }
+
+        header #branding h1 {
+            margin: 0;
+            font-size: 2em;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        header nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-grow: 1;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .profile-box {
+            display: block;
             text-decoration: none;
-            color: #808EFF;
-            font-size: 28px;
-            font-weight: bold;
+            color: inherit;
+            background-color: #fff;
+            border: 2px solid var(--secondary-color);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .profile-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--secondary-color);
+        }
+
+        .profile-box img {
+            width: 100%;
+            height: 200px; 
+            object-fit: cover; 
+            margin-bottom: 10px; 
+            border-radius: 10px; 
+        }
+
+        .profile-box h3 {
+            color: var(--primary-color);
+        }
+
+        .profile-box p {
+            font-size: 0.9em; 
+        }
+
+        .menu-icon {
+            font-size: 30px;
+            cursor: pointer;
+            color: var(--text-color);
+            padding: 0;
+            position: relative;
+            top: 0;
+            right: 0;
+            margin-left: auto;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: fixed;
+            background-color: #000;
+            right: 20px;
+            top: 70px;
+            list-style-type: none;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu li {
+            padding: 10px;
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="balance-container">
-            <a href="individuals.html" class="back-arrow">←</a>
-            <div class="balance"><span id="balance">1000</span></div>
-        </div>
-        
-        <div class="controls">
-            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
-            <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
-            <button id="game-button">Play</button>
-        </div>
-        
-        <div class="game-board" id="game-board"></div>
-        
-        
-        
-        
+    <script>
+        // Check if the user is signed in
+        if (localStorage.getItem("isSignedIn") !== "true") {
+            // Redirect to index.html if not signed in
+            window.location.href = "index.html";
+        }
 
-        
+        // Prevent accessing sign-in page if already signed in
+        if (window.location.pathname.includes('index.html') && localStorage.getItem("isSignedIn") === "true") {
+            window.location.href = "individuals.html";
+        }
+    </script>
+
+    <header>
+        <div class="container">
+            <div id="branding">
+                <a href="individuals.html">
+                    <img src="IMG_3867.png" alt="CDDC Logo">
+                </a>
+                <h1>CDDC</h1>
+            </div>
+            <nav>
+                <div class="menu-icon" onclick="toggleDropdown()">
+                    &#9776;
+                </div>
+                <ul id="dropdownMenu" class="dropdown-menu">
+                    <li><a href="individuals.html">Home</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Welcome to CDDC</h2>
+        <p>Discover and play exciting games in our cyberpunk world.</p>
+
+        <div class="profile-grid">
+            <a href="plinko.html" class="profile-box">
+                <img src="placeholder1.jpg" alt="Plinko">
+                <h3>Plinko</h3>
+                <p>Bounce to Win Big!</p>
+            </a>
+            <a href="mines.html" class="profile-box">
+                <img src="placeholder2.jpg" alt="Mines">
+                <h3>Mines</h3>
+                <p>Discover, Delight, Win Big!</p>
+            </a>
+            <a href="blackjack.html" class="profile-box">
+                <img src="placeholder3.jpg" alt="Black Jack">
+                <h3>Black Jack</h3>
+                <p>Play Smart, Win Big!</p>
+            </a>
+            <a href="blockclimb.html" class="profile-box">
+                <img src="placeholder4.jpg" alt="Block Climb">
+                <h3>Block Climb</h3>
+                <p>Build To The Top!</p>
+            </a>
+            <a href="coinflip.html" class="profile-box">
+                <img src="placeholder5.jpg" alt="Coin Flip">
+                <h3>Coin Flip</h3>
+                <p>Flip for Fortune Fun!</p>
+            </a>
+            <a href="roulette.html" class="profile-box">
+                <img src="placeholder6.jpg" alt="Roulette">
+                <h3>Roulette</h3>
+                <p>Spin, Bet, Win, Gain!</p>
+            </a>
+        </div>
     </div>
 
+    <footer>
+        <p>&copy; 2024 CDDC</p>
+    </footer>
+
     <script>
-        const gameBoard = document.getElementById('game-board');
-        const gameButton = document.getElementById('game-button');
-        const betInput = document.getElementById('bet-amount');
-        const mineCountInput = document.getElementById('mine-count');
-        const balanceDisplay = document.getElementById('balance');
-        const multiplierDisplay = document.getElementById('multiplier');
-        const winningDisplay = document.getElementById('winning-display');
-        const currentBetDisplay = document.getElementById('current-bet-display');
-        
-        let mines = [];
-        let revealedCells = 0;
-        let gameActive = false;
-        let balance = 1000;
-        let currentBet = 0;
-        let currentMultiplier = 1;
-
-        function createBoard() {
-            gameBoard.innerHTML = '';
-            for (let i = 0; i < 25; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                cell.dataset.index = i;
-                cell.addEventListener('click', () => revealCell(i));
-                gameBoard.appendChild(cell);
-            }
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
         }
-
-        function startGame() {
-            currentBet = parseInt(betInput.value);
-            const mineCount = parseInt(mineCountInput.value);
-            
-            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
-                alert('Please enter a valid bet amount within your balance.');
-                return;
-            }
-            
-            if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
-                alert('Please enter a valid number of mines (1-24).');
-                return;
-            }
-            
-            balance -= currentBet;
-            updateBalance();
-            currentBetDisplay.textContent = currentBet;
-            
-            gameActive = true;
-            revealedCells = 0;
-            mines = [];
-            currentMultiplier = 1;
-            updateMultiplier();
-            
-            while (mines.length < mineCount) {
-                const mine = Math.floor(Math.random() * 25);
-                if (!mines.includes(mine)) {
-                    mines.push(mine);
-                }
-            }
-            
-            createBoard();
-            
-            gameButton.textContent = 'Cash Out';
-            winningDisplay.textContent = `Bet Amount: $${currentBet}`;
-        }
-
-        function cashOut() {
-            if (revealedCells > 0) {
-                const winnings = Math.floor(currentBet * currentMultiplier);
-                balance += winnings;
-                updateBalance();
-                winningDisplay.textContent = `Final Amount: $${winnings}`;
-                gameActive = false;
-                gameButton.textContent = 'Play Again';
-            }
-        }
-
-        function revealCell(index) {
-            if (!gameActive) return;
-
-            const cell = gameBoard.children[index];
-            if (cell.textContent) return;
-
-            if (mines.includes(index)) {
-                cell.textContent = '💣';
-                gameOver();
-            } else {
-                cell.textContent = '💎';
-                revealedCells++;
-                updateMultiplier();
-                updateDisplayedBet();
-                if (revealedCells === 25 - mines.length) {
-                    gameWon();
-                }
-            }
-        }
-
-        function updateMultiplier() {
-            const mineCount = mines.length;
-            const safeSquares = 25 - mineCount;
-            currentMultiplier = (safeSquares / (safeSquares - revealedCells));
-            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
-        }
-
-        function updateDisplayedBet() {
-            const updatedBet = Math.floor(currentBet * currentMultiplier);
-            winningDisplay.textContent = `Current Amount: $${updatedBet}`;
-        }
-
-        function gameOver() {
-            gameActive = false;
-            winningDisplay.textContent = 'Game Over! You hit a mine.';
-            revealAllMines();
-            gameButton.textContent = 'Play Again';
-        }
-
-        function revealAllMines() {
-            for (let i = 0; i < 25; i++) {
-                const cell = gameBoard.children[i];
-                if (mines.includes(i) && !cell.textContent) {
-                    cell.textContent = '💣';
-                }
-            }
-        }
-
-        function gameWon() {
-            gameActive = false;
-            const winnings = Math.floor(currentBet * currentMultiplier);
-            balance += winnings;
-            updateBalance();
-            winningDisplay.textContent = `Final Amount: $${winnings}`;
-            gameButton.textContent = 'Play Again';
-        }
-
-        function resetGame() {
-            gameActive = false;
-            gameButton.textContent = 'Play';
-            betInput.value = '';
-            currentBet = 0;
-            currentMultiplier = 1;
-            updateMultiplier();
-            createBoard();
-        }
-
-        function updateBalance() {
-            balanceDisplay.textContent = balance;
-        }
-
-        gameButton.addEventListener('click', () => {
-            if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
-                startGame();
-            } else if (gameButton.textContent === 'Cash Out') {
-                cashOut();
-            }
-        });
-        
-        createBoard();
-        updateBalance();
-        updateMultiplier();
     </script>
 </body>
 </html>

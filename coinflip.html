@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coin Flip - CDDC</title>
     <style>
-        /* Copy the styles from your main page and add game-specific styles here */
         body {
             font-family: 'Courier New', monospace;
             line-height: 1.6;
@@ -13,24 +12,187 @@
             padding: 0;
             background-color: #2F2D37;
             color: #808EFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            width: 80%;
+            width: fit-content;
             margin: auto;
             overflow: hidden;
+            padding: 20px;
         }
-        h1 {
+        h1, h2 {
+            color: #E380F0;
+            text-align: center;
+        }
+        .multiplier-display {
+            font-size: 3em;
+            margin-top: -20px;
+            margin-bottom: 10px;
+            color: #E380F0;
+            text-align: center;
+            border: 2px solid #E380F0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .bet-display {
+            font-size: 1.5em;
+            color: #808EFF;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid #808EFF;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+        button:active {
+            transform: scale(0.95);
+            background-color: #D370D0;
+        }
+        input[type="number"] {
+            background-color: #3D3B47;
+            color: #808EFF;
+            border: 2px solid #808EFF;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #E380F0;
+            text-decoration: none;
+            text-align: center;
+        }
+        .balance-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            color: #E380F0;
+        }
+        .result-message {
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 20px;
             color: #E380F0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Coin Flip</h1>
-        <p>Welcome to Coin Flip! Flip for Fortune Fun!</p>
-        <!-- Add your Coin Flip game content here -->
-        <a href="individuals.html">Back to Games</a>
+        <div class="balance-display">Balance: <span id="balance">1000</span></div>
+        <div class="multiplier-display">Multiplier: <span id="multiplier">1.00x</span></div>
+        <div class="bet-display">Current Bet: $<span id="current-bet-display">0</span></div>
+        <div class="controls">
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <button id="game-button">Flip Coin</button>
+        </div>
+        <div class="result-message" id="result-message"></div>
+        <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
+
+    <script>
+        const balanceDisplay = document.getElementById('balance');
+        const multiplierDisplay = document.getElementById('multiplier');
+        const currentBetDisplay = document.getElementById('current-bet-display');
+        const betInput = document.getElementById('bet-amount');
+        const gameButton = document.getElementById('game-button');
+        const resultMessage = document.getElementById('result-message');
+
+        let balance = 1000;
+        let currentBet = 0;
+        let currentMultiplier = 1;
+        let gameActive = false;
+
+        function updateBalance() {
+            balanceDisplay.textContent = balance;
+        }
+
+        function updateMultiplier() {
+            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        }
+
+        function startGame() {
+            currentBet = parseInt(betInput.value);
+
+            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
+                resultMessage.textContent = 'Invalid bet amount!';
+                return;
+            }
+
+            balance -= currentBet;
+            updateBalance();
+
+            currentBetDisplay.textContent = currentBet;
+            currentMultiplier = 1;
+            updateMultiplier();
+
+            gameActive = true;
+            resultMessage.textContent = '';
+            gameButton.textContent = 'Flip Again';
+        }
+
+        function flipCoin() {
+            if (!gameActive) {
+                startGame();
+                return;
+            }
+
+            const outcome = Math.random() < 0.5 ? 'heads' : 'tails';
+            const win = Math.random() < 0.5; // 50% chance to win
+
+            if (win) {
+                currentMultiplier *= 2;
+                const winnings = currentBet * currentMultiplier;
+                resultMessage.textContent = `You won! Current Multiplier: ${currentMultiplier.toFixed(2)}x`;
+                updateMultiplier();
+                currentBetDisplay.textContent = winnings;
+            } else {
+                resultMessage.textContent = 'You lost! Better luck next time!';
+                gameActive = false;
+                gameButton.textContent = 'Play Again';
+                betInput.disabled = false;
+            }
+
+            if (!win) {
+                currentBet = 0;
+            }
+        }
+
+        gameButton.addEventListener('click', () => {
+            if (gameButton.textContent === 'Play Again') {
+                gameActive = false;
+                betInput.disabled = false;
+                resultMessage.textContent = '';
+                gameButton.textContent = 'Flip Coin';
+                return;
+            }
+
+            flipCoin();
+        });
+
+        updateBalance();
+        updateMultiplier();
+    </script>
 </body>
 </html>
-

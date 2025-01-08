@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mines - CDDC</title>
+    <title>Coin Flip - CDDC</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -27,15 +27,12 @@
             color: #E380F0;
             text-align: center;
         }
-        .multiplier-display {
-            font-size: 3em;
-            margin-top: -20px;
-            margin-bottom: 10px;
+        .balance-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
             color: #E380F0;
-            text-align: center;
-            border: 2px solid #E380F0;
-            padding: 10px;
-            border-radius: 5px;
         }
         .bet-display {
             font-size: 1.5em;
@@ -46,29 +43,11 @@
             padding: 10px;
             border-radius: 5px;
         }
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 60px);
-            gap: 8px;
-            margin: 20px auto;
-            width: fit-content;
-        }
-        .cell {
-            width: 60px;
-            height: 60px;
-            background-color: #3D3B47;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
+        .coin-display {
+            font-size: 4em;
+            text-align: center;
+            margin: 20px 0;
             color: #E380F0;
-            transition: transform 0.1s ease, background-color 0.1s ease;
-        }
-        .cell:active {
-            transform: scale(0.9);
-            background-color: #4D4A57;
         }
         .controls {
             margin-top: 20px;
@@ -107,211 +86,79 @@
             text-decoration: none;
             text-align: center;
         }
-        .balance-display {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
+        .result {
+            font-size: 2em;
             color: #E380F0;
-        }
-        @keyframes explode {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.5);
-                background-color: red;
-                color: yellow;
-            }
-            100% {
-                transform: scale(0);
-                opacity: 0;
-            }
-        }
-        .exploding {
-            animation: explode 0.5s forwards;
-        }
-        .mine {
-            background-color: red;
-            color: yellow;
-        }
-        .gem {
-            background-color: #3D3B47;
-            color: #E380F0;
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="balance-display">Balance: <span id="balance">1000</span></div>
-        <div class="multiplier-display"><span id="multiplier">1.00x</span></div>
         <div class="bet-display">$<span id="current-bet-display">0</span></div>
+        <div class="coin-display" id="coin-display">🪙</div>
         <div class="controls">
-            <input type="number" id="bet-amount" placeholder="" min="1">
-            <input type="number" id="mine-count" placeholder="Mines (1-24)" min="1" max="24" value="5">
-            <button id="game-button">Play</button>
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <button id="heads-button">Heads</button>
+            <button id="tails-button">Tails</button>
         </div>
-        <div class="game-board" id="game-board"></div>
+        <div class="result" id="result-display"></div>
         <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
-  <script>
-    const gameBoard = document.getElementById('game-board');
-    const gameButton = document.getElementById('game-button');
-    const betInput = document.getElementById('bet-amount');
-    const mineCountInput = document.getElementById('mine-count');
-    const balanceDisplay = document.getElementById('balance');
-    const multiplierDisplay = document.getElementById('multiplier');
-    const currentBetDisplay = document.getElementById('current-bet-display');
 
-    let mines = [];
-    let revealedCells = 0;
-    let gameActive = false;
-    let balance = 1000;
-    let currentBet = 0;
-    let currentMultiplier = 1;
+    <script>
+        const balanceDisplay = document.getElementById('balance');
+        const betInput = document.getElementById('bet-amount');
+        const coinDisplay = document.getElementById('coin-display');
+        const resultDisplay = document.getElementById('result-display');
+        const currentBetDisplay = document.getElementById('current-bet-display');
+        const headsButton = document.getElementById('heads-button');
+        const tailsButton = document.getElementById('tails-button');
 
-    function createBoard() {
-        gameBoard.innerHTML = '';
-        for (let i = 0; i < 25; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.dataset.index = i;
-            cell.addEventListener('click', () => revealCell(i));
-            gameBoard.appendChild(cell);
-        }
-    }
+        let balance = 1000;
+        let currentBet = 0;
 
-    function startGame() {
-        currentBet = parseInt(betInput.value);
-        const mineCount = parseInt(mineCountInput.value);
-
-        if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
-            console.log('Invalid bet amount.');
-            return;
+        function updateBalance() {
+            balanceDisplay.textContent = balance;
         }
 
-        if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
-            console.log('Invalid number of mines.');
-            return;
+        function updateBetDisplay(amount) {
+            currentBet = amount;
+            currentBetDisplay.textContent = currentBet;
         }
 
-        balance -= currentBet;
-        updateBalance();
-        currentBetDisplay.textContent = currentBet;
-
-        gameActive = true;
-        revealedCells = 0;
-        mines = [];
-        currentMultiplier = 1;
-        updateMultiplier();
-
-        while (mines.length < mineCount) {
-            const mine = Math.floor(Math.random() * 25);
-            if (!mines.includes(mine)) {
-                mines.push(mine);
+        function flipCoin(userChoice) {
+            if (!betInput.value || isNaN(betInput.value) || betInput.value <= 0 || betInput.value > balance) {
+                resultDisplay.textContent = 'Invalid bet amount';
+                return;
             }
-        }
 
-        createBoard();
-
-        // Disable inputs
-        betInput.disabled = true;
-        mineCountInput.disabled = true;
-
-        gameButton.textContent = 'Cash Out';
-    }
-
-    function cashOut() {
-        if (revealedCells > 0) {
-            const winnings = Math.floor(currentBet * currentMultiplier);
-            balance += winnings;
+            const betAmount = parseInt(betInput.value);
+            updateBetDisplay(betAmount);
+            balance -= betAmount;
             updateBalance();
-            revealAllCells();
-            console.log(`Cashed out with ${revealedCells} gems revealed! You won $${winnings}.`);
-            gameButton.textContent = 'Play Again';
 
-            // Re-enable inputs when cashing out
-            betInput.disabled = false;
-            mineCountInput.disabled = false;
-        }
-    }
+            const outcomes = ['Heads', 'Tails'];
+            const flipResult = outcomes[Math.floor(Math.random() * outcomes.length)];
+            coinDisplay.textContent = flipResult === 'Heads' ? '🙂' : '🙃';
 
-    function revealCell(index) {
-        if (!gameActive) return;
-
-        const cell = gameBoard.children[index];
-        if (cell.textContent) return;
-
-        if (mines.includes(index)) {
-            cell.textContent = '💣';
-            cell.classList.add('exploding');
-            gameOver(); // End the game immediately when a mine is hit
-        } else {
-            cell.textContent = '💎';
-            revealedCells++;
-            cell.classList.add('gem');
-            updateMultiplier(); // Update the multiplier only when a gem is revealed
-        }
-    }
-
-    function updateMultiplier() {
-        const mineCount = mines.length; // Number of mines on the board
-        const diamonds = revealedCells; // Number of gems revealed
-
-        if (diamonds > 0 && mineCount > 0 && mineCount <= 24) {
-            // Multiplier calculation based on revealed gems and mine count
-            currentMultiplier = 1 + (diamonds * (mineCount / (25 - mineCount)));
-        } else {
-            currentMultiplier = 1; // Reset to 1 in invalid states
-        }
-
-        multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
-
-        // Calculate potential winnings dynamically based on multiplier
-        if (revealedCells > 0 && gameActive) {
-            const potentialWinnings = Math.floor(currentBet * currentMultiplier);
-            currentBetDisplay.textContent = potentialWinnings;
-        }
-    }
-
-    function updateBalance() {
-        balanceDisplay.textContent = balance;
-    }
-
-    function revealAllCells() {
-        for (let i = 0; i < 25; i++) {
-            const cell = gameBoard.children[i];
-            if (mines.includes(i)) {
-                cell.textContent = '💣';
-                cell.classList.add('mine');
+            if (userChoice === flipResult) {
+                const winnings = betAmount * 2;
+                balance += winnings;
+                resultDisplay.textContent = `You won! ${flipResult}! +$${winnings}`;
             } else {
-                cell.textContent = '💎';
-                cell.classList.add('gem');
+                resultDisplay.textContent = `You lost! ${flipResult}! -$${betAmount}`;
             }
+
+            updateBalance();
         }
-    }
 
-    function gameOver() {
-        gameActive = false;
-        revealAllCells();
-        console.log('Game Over! You hit a mine.');
-        gameButton.textContent = 'Play Again';
+        headsButton.addEventListener('click', () => flipCoin('Heads'));
+        tailsButton.addEventListener('click', () => flipCoin('Tails'));
 
-        // Re-enable inputs when the game ends
-        betInput.disabled = false;
-        mineCountInput.disabled = false;
-    }
-
-    gameButton.addEventListener('click', () => {
-        if (gameButton.textContent === 'Play' || gameButton.textContent === 'Play Again') {
-            startGame();
-        } else {
-            cashOut();
-        }
-    });
-
-    createBoard();
-    updateBalance();
-</script>
+        updateBalance();
+    </script>
 </body>
 </html>

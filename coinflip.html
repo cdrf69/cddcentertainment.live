@@ -3,193 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin Flip</title>
+    <title>Coin Flip - CDDC</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #121212;
-            color: #FFFFFF;
+            background-color: #2F2D37;
+            color: #808EFF;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
         }
-
         .container {
-            text-align: center;
+            width: fit-content;
+            margin: auto;
+            overflow: hidden;
             padding: 20px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            background-color: #1E1E1E;
-            width: 300px;
         }
-
-        .balance-display, .multiplier-display, .bet-display {
+        h1, h2 {
+            color: #E380F0;
+            text-align: center;
+        }
+        .balance-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            color: #E380F0;
+        }
+        .bet-display {
+            font-size: 1.5em;
+            color: #808EFF;
+            text-align: center;
             margin-bottom: 20px;
-            font-size: 1.2em;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input[type="number"] {
-            padding: 8px;
-            font-size: 1em;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #2A2A2A;
-            color: #FFFFFF;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        button {
+            border: 2px solid #808EFF;
             padding: 10px;
-            font-size: 1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            background-color: #6200EA;
-            color: #FFFFFF;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            border-radius: 5px;
         }
-
-        button:hover {
-            background-color: #3700B3;
+        .coin-display {
+            font-size: 4em;
+            text-align: center;
+            margin: 20px 0;
+            color: #E380F0;
         }
-
-        .result-message {
+        .controls {
             margin-top: 20px;
-            font-size: 1.2em;
-        }
-
-        .coin {
-            margin: 20px auto;
-            width: 100px;
-            height: 100px;
-            background-color: #6200EA;
-            border-radius: 50%;
             display: flex;
+            gap: 10px;
             justify-content: center;
-            align-items: center;
-            color: #FFFFFF;
-            font-size: 2em;
+        }
+        button {
+            background-color: #E380F0;
+            color: #2F2D37;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
             font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+        button:active {
+            transform: scale(0.95);
+            background-color: #D370D0;
+        }
+        input[type="number"] {
+            background-color: #3D3B47;
+            color: #808EFF;
+            border: 2px solid #808EFF;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #E380F0;
+            text-decoration: none;
+            text-align: center;
+        }
+        .result {
+            font-size: 2em;
+            color: #E380F0;
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="balance-display">Balance: <span id="balance">1000</span></div>
-        <div class="multiplier-display">Multiplier: <span id="multiplier">1.00x</span></div>
-        <div class="bet-display">Bet: $<span id="current-bet-display">0</span></div>
-
+        <div class="bet-display">$<span id="current-bet-display">0</span></div>
+        <div class="coin-display" id="coin-display">🪙</div>
         <div class="controls">
-            <input type="number" id="bet-amount" placeholder="Enter Bet Amount" min="1">
-            <button id="game-button">Flip Coin</button>
+            <input type="number" id="bet-amount" placeholder="Bet Amount" min="1">
+            <button id="heads-button">Heads</button>
+            <button id="tails-button">Tails</button>
         </div>
-
-        <div class="coin" id="coin">H</div>
-
-        <div class="result-message" id="result-message"></div>
+        <div class="result" id="result-display"></div>
+        <a href="individuals.html" class="back-link">Back to Games</a>
     </div>
 
     <script>
         const balanceDisplay = document.getElementById('balance');
-        const multiplierDisplay = document.getElementById('multiplier');
-        const currentBetDisplay = document.getElementById('current-bet-display');
         const betInput = document.getElementById('bet-amount');
-        const gameButton = document.getElementById('game-button');
-        const resultMessage = document.getElementById('result-message');
-        const coin = document.getElementById('coin');
+        const coinDisplay = document.getElementById('coin-display');
+        const resultDisplay = document.getElementById('result-display');
+        const currentBetDisplay = document.getElementById('current-bet-display');
+        const headsButton = document.getElementById('heads-button');
+        const tailsButton = document.getElementById('tails-button');
 
         let balance = 1000;
         let currentBet = 0;
-        let currentMultiplier = 1;
-        let gameActive = false;
 
         function updateBalance() {
             balanceDisplay.textContent = balance;
         }
 
-        function updateMultiplier() {
-            multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        function updateBetDisplay(amount) {
+            currentBet = amount;
+            currentBetDisplay.textContent = currentBet;
         }
 
-        function startGame() {
-            currentBet = parseInt(betInput.value);
-
-            if (isNaN(currentBet) || currentBet < 1 || currentBet > balance) {
-                resultMessage.textContent = 'Invalid bet amount!';
+        function flipCoin(userChoice) {
+            if (!betInput.value || isNaN(betInput.value) || betInput.value <= 0 || betInput.value > balance) {
+                resultDisplay.textContent = 'Invalid bet amount';
                 return;
             }
 
-            balance -= currentBet;
+            const betAmount = parseInt(betInput.value);
+            updateBetDisplay(betAmount);
+            balance -= betAmount;
             updateBalance();
 
-            currentBetDisplay.textContent = currentBet;
-            currentMultiplier = 1;
-            updateMultiplier();
+            const outcomes = ['Heads', 'Tails'];
+            const flipResult = outcomes[Math.floor(Math.random() * outcomes.length)];
+            coinDisplay.textContent = flipResult === 'Heads' ? '🙂' : '🙃';
 
-            gameActive = true;
-            resultMessage.textContent = '';
-            gameButton.textContent = 'Flip Again';
-        }
-
-        function flipCoin() {
-            if (!gameActive) {
-                startGame();
-                return;
+            if (userChoice === flipResult) {
+                const winnings = betAmount * 2;
+                balance += winnings;
+                resultDisplay.textContent = `You won! ${flipResult}! +$${winnings}`;
+            } else {
+                resultDisplay.textContent = `You lost! ${flipResult}! -$${betAmount}`;
             }
 
-            coin.textContent = '';
-            coin.style.animation = 'spin 1s linear';
-
-            setTimeout(() => {
-                const outcome = Math.random() < 0.5 ? 'H' : 'T';
-                const win = Math.random() < 0.5; // 50% chance to win
-
-                coin.textContent = outcome;
-                coin.style.animation = '';
-
-                if (win) {
-                    currentMultiplier *= 2;
-                    const winnings = currentBet * currentMultiplier;
-                    resultMessage.textContent = `You won! Multiplier: ${currentMultiplier.toFixed(2)}x`;
-                    updateMultiplier();
-                    currentBetDisplay.textContent = winnings;
-                } else {
-                    resultMessage.textContent = 'You lost! Try again!';
-                    gameActive = false;
-                    gameButton.textContent = 'Play Again';
-                }
-
-                if (!win) {
-                    currentBet = 0;
-                }
-            }, 1000);
+            updateBalance();
         }
 
-        gameButton.addEventListener('click', () => {
-            if (gameButton.textContent === 'Play Again') {
-                gameActive = false;
-                resultMessage.textContent = '';
-                gameButton.textContent = 'Flip Coin';
-                return;
-            }
-
-            flipCoin();
-        });
+        headsButton.addEventListener('click', () => flipCoin('Heads'));
+        tailsButton.addEventListener('click', () => flipCoin('Tails'));
 
         updateBalance();
-        updateMultiplier();
     </script>
 </body>
 </html>
